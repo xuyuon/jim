@@ -53,9 +53,11 @@ def runParameterEstimation(event):
     total_time_start = time.time()
 
     # first, fetch a 4s segment centered on the event
-    gps = event_gps(event)
-    start = gps - 2
-    end = gps + 2
+    gps = event_gps(event) # trigger time
+    duration = 128 # Analysis segment duration
+    post_trigger_duration = 2
+    end = gps + post_trigger_duration
+    start = end - duration
     fmin = 20.0
     fmax = 1024.0
     
@@ -84,7 +86,7 @@ def runParameterEstimation(event):
 
     
     ############################## Set up Priors ##############################
-    Mc_prior = Uniform(10.0, 80.0, naming=["M_c"])
+    Mc_prior = Uniform(5.0, 100.0, naming=["M_c"])
     q_prior = Uniform(
         0.125,
         1.0,
@@ -93,7 +95,7 @@ def runParameterEstimation(event):
     )
     s1_prior = Sphere(naming="s1")
     s2_prior = Sphere(naming="s2")
-    dL_prior = Uniform(0.0, 2000.0, naming=["d_L"])
+    dL_prior = Uniform(0.0, 5000.0, naming=["d_L"])
     t_c_prior = Uniform(-0.05, 0.05, naming=["t_c"])
     phase_c_prior = Uniform(0.0, 2 * jnp.pi, naming=["phase_c"])
     cos_iota_prior = Uniform(
@@ -143,7 +145,7 @@ def runParameterEstimation(event):
 
     bounds = jnp.array(
         [
-            [10.0, 80.0],
+            [5.0, 100.0],
             [0.125, 1.0],
             [0, jnp.pi],
             [0, 2*jnp.pi],
@@ -151,7 +153,7 @@ def runParameterEstimation(event):
             [0, jnp.pi],
             [0, 2*jnp.pi],
             [0.0, 1.0],
-            [0.0, 2000.0],
+            [0.0, 5000.0],
             [-0.05, 0.05],
             [0.0, 2 * jnp.pi],
             [-1.0, 1.0],
@@ -164,7 +166,7 @@ def runParameterEstimation(event):
     ############################## Set up Likelihood ##############################
     # likelihood = TransientLikelihoodFD([H1, L1], waveform=waveform, trigger_time=gps, duration=4, post_trigger_duration=2)
     print("check point!!!!")
-    likelihood = HeterodynedTransientLikelihoodFD(detectors, prior=prior, bounds=bounds, waveform=waveform, trigger_time=gps, duration=4, post_trigger_duration=2)
+    likelihood = HeterodynedTransientLikelihoodFD(detectors, prior=prior, bounds=bounds, waveform=waveform, trigger_time=gps, duration=duration, post_trigger_duration=post_trigger_duration)
 
 
     ############################## Set up Jim Sampler ##############################
