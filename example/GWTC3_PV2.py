@@ -65,17 +65,17 @@ def runParameterEstimation(event):
     detectors = []
     if isPresentInH1(event):
         ifos.append("H1")
-        H1.load_data(gps, 2, 2, fmin, fmax, psd_pad=16, tukey_alpha=0.2)
+        H1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=0.05)
         detectors.append(H1)
     
     if isPresentInL1(event):
         ifos.append("L1")
-        L1.load_data(gps, 2, 2, fmin, fmax, psd_pad=16, tukey_alpha=0.2)
+        L1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=0.05)
         detectors.append(L1)
         
     if isPresentInV1(event):
         ifos.append("V1")
-        V1.load_data(gps, 2, 2, fmin, fmax, psd_pad=16, tukey_alpha=0.2)
+        V1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=0.05)
         detectors.append(V1)
     
     if len(detectors) == 0:
@@ -218,7 +218,7 @@ def plotPosterior(result, event):
 def savePosterior(result, event):
     samples = np.array(list(result.values())).reshape(15, -1) # flatten the array
     transposed_array = samples.T # transpose the array
-    with h5py.File(args.output_dir + 'posterior_samples/' + event + '.h5', 'w') as f:
+    with h5py.File(args.output_dir + '/posterior_samples/' + event + '.h5', 'w') as f:
         f.create_dataset('posterior', data=transposed_array)
         
 def plotRunAnalysis(summary, event):
