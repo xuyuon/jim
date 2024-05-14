@@ -16,19 +16,16 @@ from gwosc import datasets
 from pathlib import Path
 import os
 from tap import Tap
+from multiprocessing import Pool
 
 
 
 class ArgumentParser(Tap):
     output_dir: str = 'injection_run'
-args = ArgumentParser().parse_args()
 
-
-jax.config.update("jax_enable_x64", True)
 
 
 ############################## Fetch GWTC-3 events gps time ##############################
-gwtc3 = datasets.find_datasets(type='events', catalog='GWTC-3-confident')
 
 def isPresentInH1(event):
     if event in datasets.find_datasets(type='events', catalog='GWTC-3-confident', detector='H1'):
@@ -206,7 +203,7 @@ def runParameterEstimation(event):
 
 ############################## Plot Posterior Samples ##############################
 def plotPosterior(result, event):
-    labels = ["M_c", "q", "s_1", "s_1", "s_1", "s_2", "s_2", "s_2", "dL", "t_c", "phase_c", "cos_iota", "psi", "ra", "sin_dec"]
+    labels = ["M_c", "eta", "s_1", "s_1", "s_1", "s_2", "s_2", "s_2", "dL", "t_c", "phase_c", "iota", "psi", "ra", "dec"]
     
     samples = np.array(list(result.values())).reshape(15, -1) # flatten the array
     transposed_array = samples.T # transpose the array
@@ -271,11 +268,11 @@ def plotLikelihood(summary, event):
 
     # Plot each line
     for i in range(log_prob.shape[0]):
-        ax.plot(data[i], linewidth=0.05)
+        ax.plot(log_prob[i], linewidth=0.05)
     mkdir(args.output_dir + "/likelihood")
     plt.savefig(args.output_dir + "/likelihood/"+event+".jpeg")
 
-    fig = plt.plot(data[0], linewidth=0.05)
+    fig = plt.plot(log_prob[0], linewidth=0.05)
     mkdir(args.output_dir + "/likelihood_single_line")
     plt.savefig(args.output_dir + "/likelihood_single_line/"+event+".jpeg")
 
@@ -285,16 +282,33 @@ def mkdir(path):
         os.makedirs(path)
 
 ############################## Scan through the GWTC-3 Database ##############################
-for event in gwtc3:
+def runParameterEstimation(event):
     file = Path(args.output_dir + '/posterior_samples/' + event + '.h5')
     if file.is_file():
         print(event + 'already exists')
     else:
-        result, summary = runParameterEstimation(event)
-        if result != None:
-            mkdir(args.output_dir)
-            plotPosterior(result, event)
-            savePosterior(result, event)
-            plotRunAnalysis(summary, event)
-            plotLikelihood(summary, event)
+        try:
+            result, summary = runParameterEstimation(event)
+            if result != None:
+                mkdir(args.output_dir)
+                plotPosterior(result, event)
+                savePosterior(result, event)
+                plotRunAnalysis(summary, event)
+                plotLikelihood(summary, event)
+        except ValueError:
+            print("ValueError: " + event)
+            return
+        except:
+            print("Error: " + event)
+            return
+
+
+
+if __name__ == '__main__':
+    args = ArgumentParser().parse_args()
+    jax.config.update("jax_enable_x64", True)
+    gwtc3 = datasets.find_datasets(type='events', catalog='GWTC-3-confident')
+    with Pool(4) as p:
+        p.map(runParameterEstimation, gwtc3)
+            
     
