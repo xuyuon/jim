@@ -8,7 +8,7 @@
 #SBATCH --constraint=a100  # if you want a particular type of GPU
 
 module load python cuda
-source /mnt/home/yxu10/env/bin/activate
+source /mnt/home/yxu10/venv_10/bin/activate
 cd $SLURM_SUBMIT_DIR
 
-python GWTC3_PV2.py 
+python GWTC3_PV2.py --output_dir 'IMRPhenomPV2_20Hz'
