@@ -17,30 +17,9 @@ from pathlib import Path
 import os
 from tap import Tap
 
+from flowMC.strategy.optimization import optimization_Adam
+output_dir = 'GW200129'
 
-
-
-class ArgumentParser(Tap):
-    output_dir: str = 'injection_run'
-
-
-
-############################## Fetch GWTC-3 events gps time ##############################
-
-def isPresentInH1(event):
-    if event in datasets.find_datasets(type='events', catalog='GWTC-3-confident', detector='H1'):
-        return True
-    return False
-
-def isPresentInL1(event):
-    if event in datasets.find_datasets(type='events', catalog='GWTC-3-confident', detector='L1'):
-        return True
-    return False
-
-def isPresentInV1(event):
-    if event in datasets.find_datasets(type='events', catalog='GWTC-3-confident', detector='V1'):
-        return True
-    return False
 
 
 
@@ -51,54 +30,45 @@ def runParameterEstimation(event):
 
     # first, fetch a 4s segment centered on the event
     gps = event_gps(event) # trigger time
-    duration = 128 # Analysis segment duration
+    duration = 8 # Analysis segment duration
     post_trigger_duration = 2
     end = gps + post_trigger_duration
     start = end - duration
     fmin = 20.0
-    fmax = 1024.0
+    fmax = 896.0
     roll_off = 0.4
     psd_alpha = 2 * roll_off / duration
+    f_ref = 20.0
     
-    ifos = []
     detectors = []
-    if isPresentInH1(event):
-        ifos.append("H1")
-        H1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
-        detectors.append(H1)
+    H1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
+    detectors.append(H1)
     
-    if isPresentInL1(event):
-        ifos.append("L1")
-        L1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
-        detectors.append(L1)
-        
-    if isPresentInV1(event):
-        ifos.append("V1")
-        V1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
-        detectors.append(V1)
+    L1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
+    detectors.append(L1)
     
-    if len(detectors) == 0:
-        print("No detector data from" + event)
-        return None, None
-        
-    waveform = RippleIMRPhenomPv2(f_ref=20)
+    V1.load_data(gps, duration-post_trigger_duration, post_trigger_duration, fmin, fmax, psd_pad=4*duration, tukey_alpha=psd_alpha)
+    detectors.append(V1)
+    
+
+    waveform = RippleIMRPhenomPv2(f_ref=f_ref)
     # waveform = RippleIMRPhenomD()
 
     
     ############################## Set up Priors ##############################
-    Mc_prior = Unconstrained_Uniform(1.0, 100.0, naming=["M_c"])
+    Mc_prior = Unconstrained_Uniform(4.5, 48.9, naming=["M_c"])
     q_prior = Unconstrained_Uniform(
-        0.125,
+        0.05,
         1.0,
         naming=["q"],
         transforms={"q": ("eta", lambda params: params["q"] / (1 + params["q"]) ** 2)},
     )
     s1_prior = Sphere(naming="s1")
     s2_prior = Sphere(naming="s2")
-    #s1_z_prior = Unconstrained_Uniform(-0.99, 0.99, naming=["s1_z"]) 
-    #s2_z_prior = Unconstrained_Uniform(-0.99, 0.99, naming=["s2_z"])
-    dL_prior = Unconstrained_Uniform(10.0, 5000.0, naming=["d_L"])
-    t_c_prior = Unconstrained_Uniform(-0.05, 0.05, naming=["t_c"])
+    # s1_z_prior = Unconstrained_Uniform(-0.99, 0.99, naming=["s1_z"]) 
+    # s2_z_prior = Unconstrained_Uniform(-0.99, 0.99, naming=["s2_z"])
+    dL_prior = Unconstrained_Uniform(100.0, 10000.0, naming=["d_L"])
+    t_c_prior = Unconstrained_Uniform(-0.1, 0.1, naming=["t_c"]) 
     phase_c_prior = Unconstrained_Uniform(0.0, 2 * jnp.pi, naming=["phase_c"])
     cos_iota_prior = Unconstrained_Uniform(
         -1.0,
@@ -147,16 +117,16 @@ def runParameterEstimation(event):
 
     bounds = jnp.array(
         [
-            [0.0, 100.0], # chirp mass
-            [0.125, 1.0], # mass ratio
+            [4.5, 48.9], # chirp mass
+            [0.05, 1.0], # mass ratio
             [0, jnp.pi],
             [0, 2 * jnp.pi],
             [0.0, 1.0],
             [0, jnp.pi],
             [0, 2 * jnp.pi],
             [0.0, 1.0],
-            [10.0, 5000.0], # luminosity distance
-            [-0.05, 0.05], # geocent time
+            [100.0, 10000.0], # luminosity distance
+            [-0.1, 0.1], # geocent time
             [0.0, 2 * jnp.pi], # phase
             [-1.0, 1.0], # cos iota
             [0.0, jnp.pi], # psi
@@ -214,15 +184,15 @@ def plotPosterior(result, event):
     samples = np.array(list(result.values())).reshape(15, -1) # flatten the array
     transposed_array = samples.T # transpose the array
     figure = corner.corner(transposed_array, labels=labels, plot_datapoints=False, title_quantiles=[0.16, 0.5, 0.84], show_titles=True, title_fmt='g', use_math_text=True)
-    mkdir(args.output_dir + "/posterior_plot")
-    plt.savefig(args.output_dir + "/posterior_plot/"+event+".jpeg")
+    mkdir(output_dir + "/posterior_plot")
+    plt.savefig(output_dir + "/posterior_plot/"+event+".jpeg")
 
 ############################## Save Posterior Samples ##############################
 def savePosterior(result, event):
     samples = np.array(list(result.values())).reshape(15, -1) # flatten the array
     transposed_array = samples.T # transpose the array
-    mkdir(args.output_dir + "/posterior_samples")
-    with h5py.File(args.output_dir + '/posterior_samples/' + event + '.h5', 'w') as f:
+    mkdir(output_dir + "/posterior_samples")
+    with h5py.File(output_dir + '/posterior_samples/' + event + '.h5', 'w') as f:
         f.create_dataset('posterior', data=transposed_array)
         
 def plotRunAnalysis(summary, event):
@@ -262,8 +232,8 @@ def plotRunAnalysis(summary, event):
     plt.xlabel("iteration")
     plt.tight_layout()
     
-    mkdir(args.output_dir + "/posterior_analysis")
-    plt.savefig(args.output_dir + "/posterior_analysis/"+event+".jpeg")
+    mkdir(output_dir + "/posterior_analysis")
+    plt.savefig(output_dir + "/posterior_analysis/"+event+".jpeg")
 
 
 def plotLikelihood(summary, event):
@@ -275,15 +245,15 @@ def plotLikelihood(summary, event):
 
     fig = plt.plot(log_prob[0], linewidth=0.05)
     plt.ylim(bottom=-20)
-    mkdir(args.output_dir + "/likelihood_single_line")
-    plt.savefig(args.output_dir + "/likelihood_single_line/"+event+".jpeg")
+    mkdir(output_dir + "/likelihood_single_line")
+    plt.savefig(output_dir + "/likelihood_single_line/"+event+".jpeg")
 
     # Plot each line
     for i in range(log_prob.shape[0]):
         ax.plot(log_prob[i], linewidth=0.05)
     plt.ylim(bottom=-20)
-    mkdir(args.output_dir + "/likelihood")
-    plt.savefig(args.output_dir + "/likelihood/"+event+".jpeg")
+    mkdir(output_dir + "/likelihood")
+    plt.savefig(output_dir + "/likelihood/"+event+".jpeg")
     
     
 
@@ -295,32 +265,21 @@ def mkdir(path):
 
 ############################## Scan through the GWTC-3 Database ##############################
 def runAnalysis(event):
-    file = Path(args.output_dir + '/posterior_samples/' + event + '.h5')
+    file = Path(output_dir + '/posterior_samples/' + event + '.h5')
     if file.is_file():
         print(event + 'already exists')
     else:
-        try:
-            result, summary = runParameterEstimation(event)
-            if result != None:
-                mkdir(args.output_dir)
-                plotPosterior(result, event)
-                savePosterior(result, event)
-                plotRunAnalysis(summary, event)
-                plotLikelihood(summary, event)
-        except ValueError:
-            print("ValueError: " + event)
-            return
-        except:
-            print("Error: " + event)
-            return
+        result, summary = runParameterEstimation(event)
+        if result != None:
+            mkdir(output_dir)
+            plotPosterior(result, event)
+            savePosterior(result, event)
+            plotRunAnalysis(summary, event)
+            plotLikelihood(summary, event)
+
 
 
 if __name__ == '__main__':
-    args = ArgumentParser().parse_args()
-    jax.config.update("jax_enable_x64", True)
     gwtc3 = datasets.find_datasets(type='events', catalog='GWTC-3-confident')
-    for event in gwtc3:
-        runAnalysis(event)
-
-            
-    
+    event = "GW200129_065458-v1"
+    runAnalysis(event)
