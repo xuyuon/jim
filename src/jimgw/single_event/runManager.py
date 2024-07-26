@@ -126,10 +126,9 @@ class SingleEventPERunManager(RunManager):
             print("Neither run instance nor path provided.")
             raise ValueError
 
-        if self.run.injection and not self.run.injection_parameters:
-            raise ValueError("Injection mode requires injection parameters.")
-
         local_prior = self.initialize_prior()
+        if self.run.injection and not self.run.injection_parameters:
+            self.initialize_injection_params(local_prior)
         local_likelihood = self.initialize_likelihood(local_prior)
         self.jim = Jim(local_likelihood, local_prior, **self.run.jim_parameters)
 
@@ -264,6 +263,18 @@ class SingleEventPERunManager(RunManager):
             raise ValueError(f"Waveform {name} not recognized.")
         waveform = waveform_preset[name](**self.run.waveform_parameters)
         return waveform
+
+    def initialize_injection_params(self, prior: prior.Prior):
+        """
+        Initialize the injection parameters if not provided.
+        """
+        print("Injection parameters not given. Initializing injection parameters.")
+        injection_parameters = {}
+        draw = prior.sample(jax.random.PRNGKey(self.run.seed), 1)
+        for name, value in draw.items():
+            injection_parameters[name] = value.item()
+        self.run.injection_parameters = injection_parameters
+        print(f"Injection parameters: {injection_parameters}")
 
     ### Utility functions ###
 
