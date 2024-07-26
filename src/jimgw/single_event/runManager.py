@@ -267,14 +267,15 @@ class SingleEventPERunManager(RunManager):
     def initialize_injection_params(self, prior: prior.Prior):
         """
         Initialize the injection parameters if not provided.
+        TODO: Do after prior class is implemented.
         """
-        print("Injection parameters not given. Initializing injection parameters.")
-        injection_parameters = {}
-        draw = prior.sample(jax.random.PRNGKey(self.run.seed), 1)
-        for name, value in draw.items():
-            injection_parameters[name] = value.item()
-        self.run.injection_parameters = injection_parameters
-        print(f"Injection parameters: {injection_parameters}")
+        # print("Injection parameters not given. Initializing injection parameters.")
+        # injection_parameters = {}
+        # draw = prior.sample(jax.random.PRNGKey(self.run.seed), 1)
+        # for name, value in draw.items():
+        #     injection_parameters[name] = value.item()
+        # self.run.injection_parameters = injection_parameters
+        # print(f"Injection parameters: {injection_parameters}")
 
     ### Utility functions ###
 
