@@ -128,7 +128,7 @@ class SingleEventPERunManager(RunManager):
 
         local_prior = self.initialize_prior()
         if self.run.injection and not self.run.injection_parameters:
-            self.initialize_injection_params(local_prior)
+            raise ValueError("Injection mode but no injection parameters provided.")
         local_likelihood = self.initialize_likelihood(local_prior)
         self.jim = Jim(local_likelihood, local_prior, **self.run.jim_parameters)
 
