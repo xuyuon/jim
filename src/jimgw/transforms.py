@@ -473,7 +473,7 @@ class MassRatioToSymmetricMassRatioTransform(BijectiveTransform):
         }
 
 
-class SpinToCartesianSpinTransform(NtoMTransform):
+class SpinToCartesianSpinTransform(NtoNTransform):
     """
     Spin to Cartesian spin transformation
     """
@@ -497,9 +497,9 @@ class SpinToCartesianSpinTransform(NtoMTransform):
             phi12 = x[name_mapping[0][4]]
             a1 = x[name_mapping[0][5]]
             a2 = x[name_mapping[0][6]]
-            M_c = x[name_mapping[0][7]]
-            q = x[name_mapping[0][8]]
-            phase_c = x[name_mapping[0][9]]
+            M_c = x['M_c']
+            q = x['q']
+            phase_c = x['phase_c']
             iota, s1x, s1y, s1z, s2x, s2y, s2z = spin_to_cartesian_spin(
                 theta_jn, phi_jl, theta1, theta2, phi12, a1, a2, M_c, q, self.freq_ref, phase_c
             )
