@@ -479,7 +479,6 @@ class SpinToCartesianSpinTransform(NtoMTransform):
     """
 
     freq_ref: Float
-    phase_c: Float
     
     def __init__(
         self,
@@ -489,7 +488,6 @@ class SpinToCartesianSpinTransform(NtoMTransform):
         super().__init__(name_mapping)
         
         self.freq_ref = freq_ref
-        self.phase_c = phase_c
         
         def named_transform(x):
             theta_jn = x[name_mapping[0][0]]
