@@ -503,6 +503,6 @@ class SpinToCartesianSpinTransform(NtoNTransform):
             iota, s1x, s1y, s1z, s2x, s2y, s2z = spin_to_cartesian_spin(
                 theta_jn, phi_jl, theta1, theta2, phi12, a1, a2, M_c, q, self.freq_ref, phase_c
             )
-            return {name_mapping[1][0]: iota, name_mapping[1][1]: s1x, name_mapping[1][2]: s1y, name_mapping[1][3]: s1z, name_mapping[1][4]: s2x, name_mapping[1][5]: s2y, name_mapping[1][6]: s2z}
+            return {name_mapping[1][0]: jnp.array(iota), name_mapping[1][1]: jnp.array(s1x), name_mapping[1][2]: jnp.array(s1y), name_mapping[1][3]: jnp.array(s1z), name_mapping[1][4]: jnp.array(s2x), name_mapping[1][5]: jnp.array(s2y), name_mapping[1][6]: jnp.array(s2z)}
         
         self.transform_func = named_transform
