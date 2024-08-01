@@ -7,7 +7,7 @@ from chex import assert_rank
 from beartype import beartype as typechecker
 from jaxtyping import Float, Array, jaxtyped
 
-from jimgw.single_event.utils import spin_to_cartesian_spin
+from jimgw.single_event.utils import spin_to_cartesian_spin, q_to_eta, eta_to_q
 
 
 class Transform(ABC):
