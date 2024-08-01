@@ -8,7 +8,7 @@ from jimgw.prior import CombinePrior, UniformPrior, CosinePrior, SinePrior, Unif
 from jimgw.single_event.detector import H1, L1
 from jimgw.single_event.likelihood import TransientLikelihoodFD
 from jimgw.single_event.waveform import RippleIMRPhenomPv2
-from jimgw.transforms import BoundToUnbound, MassRatioToSymmetricMassRatioTransform
+from jimgw.transforms import BoundToUnbound, MassRatioToSymmetricMassRatioTransform, SpinToCartesianSpinTransform
 from flowMC.strategy.optimization import optimization_Adam
 
 jax.config.update("jax_enable_x64", True)
@@ -34,18 +34,18 @@ for ifo in ifos:
     ifo.load_data(gps, start_pad, end_pad, fmin, fmax, psd_pad=16, tukey_alpha=0.2)
 
 Mc_prior = UniformPrior(10.0, 80.0, parameter_names=["M_c"])
-q_prior = UniformPrior(
-    0.125,
-    1.,
-    parameter_names=["q"],
-)
-s1_prior = UniformSpherePrior(parameter_names=["s1"])
-s2_prior = UniformSpherePrior(parameter_names=["s2"])
+q_prior = UniformPrior(0.125, 1., parameter_names=["q"])
+theta_jn_prior = SinePrior(parameter_names=["theta_jn"])
+phi_jl_prior = UniformPrior(0.0, 2 * jnp.pi, parameter_names=["phi_jl"])
+theta_1_prior = SinePrior(parameter_names=["theta_1"])
+theta_2_prior = SinePrior(parameter_names=["theta_2"])
+phi_12_prior = UniformPrior(0.0, 2 * jnp.pi, parameter_names=["phi_12"])
+a1_prior = UniformPrior(0.0, 1.0, parameter_names=["a1"])
+a2_prior = UniformPrior(0.0, 1.0, parameter_names=["a2"])
 # Current likelihood sampling will fail and give nan because of large number
 dL_prior = UniformPrior(0.0, 2000.0, parameter_names=["d_L"])
 t_c_prior = UniformPrior(-0.05, 0.05, parameter_names=["t_c"])
 phase_c_prior = UniformPrior(0.0, 2 * jnp.pi, parameter_names=["phase_c"])
-iota_prior = SinePrior(parameter_names=["iota"])
 psi_prior = UniformPrior(0.0, jnp.pi, parameter_names=["psi"])
 ra_prior = UniformPrior(0.0, 2 * jnp.pi, parameter_names=["ra"])
 dec_prior = CosinePrior(parameter_names=["dec"])
@@ -54,12 +54,16 @@ prior = CombinePrior(
     [
         Mc_prior,
         q_prior,
-        s1_prior,
-        s2_prior,
+        theta_jn_prior,
+        phi_jl_prior,
+        theta_1_prior,
+        theta_2_prior,
+        phi_12_prior,
+        a1_prior,
+        a2_prior,
         dL_prior,
         t_c_prior,
         phase_c_prior,
-        iota_prior,
         psi_prior,
         ra_prior,
         dec_prior,
@@ -69,12 +73,16 @@ prior = CombinePrior(
 sample_transforms = [
     BoundToUnbound(name_mapping = [["M_c"], ["M_c_unbounded"]], original_lower_bound=10.0, original_upper_bound=80.0),
     BoundToUnbound(name_mapping = [["q"], ["q_unbounded"]], original_lower_bound=0.125, original_upper_bound=1.),
-    BoundToUnbound(name_mapping = [["s1_z"], ["s1_z_unbounded"]] , original_lower_bound=-1.0, original_upper_bound=1.0),
-    BoundToUnbound(name_mapping = [["s2_z"], ["s2_z_unbounded"]] , original_lower_bound=-1.0, original_upper_bound=1.0),
+    BoundToUnbound(name_mapping = [["theta_jn"], ["theta_jn_unbounded"]] , original_lower_bound=0.0, original_upper_bound=jnp.pi),
+    BoundToUnbound(name_mapping = [["phi_jl"], ["phi_jl_unbounded"]] , original_lower_bound=0.0, original_upper_bound=2 * jnp.pi),
+    BoundToUnbound(name_mapping = [["theta_1"], ["theta_1_unbounded"]] , original_lower_bound=0.0, original_upper_bound=jnp.pi),
+    BoundToUnbound(name_mapping = [["theta_2"], ["theta_2_unbounded"]] , original_lower_bound=0.0, original_upper_bound=jnp.pi),
+    BoundToUnbound(name_mapping = [["phi_12"], ["phi_12_unbounded"]] , original_lower_bound=0.0, original_upper_bound=2 * jnp.pi),
+    BoundToUnbound(name_mapping = [["a1"], ["a1_unbounded"]] , original_lower_bound=0.0, original_upper_bound=1.0),
+    BoundToUnbound(name_mapping = [["a2"], ["a2_unbounded"]] , original_lower_bound=0.0, original_upper_bound=1.0),
     BoundToUnbound(name_mapping = [["d_L"], ["d_L_unbounded"]] , original_lower_bound=0.0, original_upper_bound=2000.0),
     BoundToUnbound(name_mapping = [["t_c"], ["t_c_unbounded"]] , original_lower_bound=-0.05, original_upper_bound=0.05),
     BoundToUnbound(name_mapping = [["phase_c"], ["phase_c_unbounded"]] , original_lower_bound=0.0, original_upper_bound=2 * jnp.pi),
-    BoundToUnbound(name_mapping = [["iota"], ["iota_unbounded"]], original_lower_bound=0., original_upper_bound=jnp.pi),
     BoundToUnbound(name_mapping = [["psi"], ["psi_unbounded"]], original_lower_bound=0.0, original_upper_bound=jnp.pi),
     BoundToUnbound(name_mapping = [["ra"], ["ra_unbounded"]], original_lower_bound=0.0, original_upper_bound=2 * jnp.pi),
     BoundToUnbound(name_mapping = [["dec"], ["dec_unbounded"]],original_lower_bound=-jnp.pi / 2, original_upper_bound=jnp.pi / 2)
@@ -82,11 +90,12 @@ sample_transforms = [
 
 likelihood_transforms = [
     MassRatioToSymmetricMassRatioTransform(name_mapping=[["q"], ["eta"]]),
+    SpinToCartesianSpinTransform(name_mapping=[["theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a1", "a2"], ["iota", "s1x", "s1y", "s1z", "s2x", "s2y", "s2z"]]),
 ]
 
 likelihood = TransientLikelihoodFD(
     ifos,
-    waveform=RippleIMRPhenomD(),
+    waveform=RippleIMRPhenomPv2(),
     trigger_time=gps,
     duration=4,
     post_trigger_duration=2,
