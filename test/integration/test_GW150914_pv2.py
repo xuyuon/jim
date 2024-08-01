@@ -90,7 +90,7 @@ sample_transforms = [
 
 likelihood_transforms = [
     MassRatioToSymmetricMassRatioTransform(name_mapping=[["q"], ["eta"]]),
-    SpinToCartesianSpinTransform(name_mapping=[["theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a1", "a2"], ["iota", "s1x", "s1y", "s1z", "s2x", "s2y", "s2z"]]),
+    SpinToCartesianSpinTransform(name_mapping=[["theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a1", "a2"], ["iota", "s1x", "s1y", "s1z", "s2x", "s2y", "s2z"]], ),
 ]
 
 likelihood = TransientLikelihoodFD(
