@@ -5,6 +5,45 @@ from jaxtyping import Array, Float
 
 from jimgw.constants import Msun
 
+def q_to_eta(q: Float) -> Float:
+    """
+    Transforming the chirp mass M_c and mass ratio q to the symmetric mass ratio eta.
+
+    Parameters
+    ----------
+    M_c : Float
+            Chirp mass.
+    q : Float
+            Mass ratio.
+
+    Returns
+    -------
+    eta : Float
+            Symmetric mass ratio.
+    """
+    eta = q / (1 + q) ** 2
+    return eta
+
+
+def eta_to_q(eta: Float) -> Float:
+    """
+    Transforming the symmetric mass ratio eta to the mass ratio q.
+
+    Copied and modified from bilby/gw/conversion.py
+
+    Parameters
+    ----------
+    eta : Float
+            Symmetric mass ratio.
+
+    Returns
+    -------
+    q : Float
+            Mass ratio.
+    """
+    temp = 1 / eta / 2 - 1
+    return temp - (temp**2 - 1) ** 0.5
+
 def inner_product(
     h1: Float[Array, " n_sample"],
     h2: Float[Array, " n_sample"],
