@@ -16,6 +16,7 @@ from jimgw.single_event.utils import (
     ra_dec_to_zenith_azimuth,
     zenith_azimuth_to_ra_dec,
     euler_rotation,
+    spin_to_cartesian_spin,
 )
 
 
@@ -485,6 +486,41 @@ class SkyFrameToDetectorFrameSkyPositionTransform(BijectiveTransform):
 
         self.inverse_transform_func = named_inverse_transform
 
+
+class SpinToCartesianSpinTransform(NtoNTransform):
+    """
+    Spin to Cartesian spin transformation
+    """
+
+    freq_ref: Float
+    
+    def __init__(
+        self,
+        name_mapping: tuple[list[str], list[str]],
+        freq_ref: Float,
+    ):
+        super().__init__(name_mapping)
+        
+        self.freq_ref = freq_ref
+        
+        def named_transform(x):
+            theta_jn = x[name_mapping[0][0]]
+            phi_jl = x[name_mapping[0][1]]
+            theta1 = x[name_mapping[0][2]]
+            theta2 = x[name_mapping[0][3]]
+            phi12 = x[name_mapping[0][4]]
+            a1 = x[name_mapping[0][5]]
+            a2 = x[name_mapping[0][6]]
+            M_c = x['M_c']
+            q = x['q']
+            phase_c = x['phase_c']
+            iota, s1x, s1y, s1z, s2x, s2y, s2z = spin_to_cartesian_spin(
+                theta_jn, phi_jl, theta1, theta2, phi12, a1, a2, M_c, q, self.freq_ref, phase_c
+            )
+            return {name_mapping[1][0]: iota, name_mapping[1][1]: s1x, name_mapping[1][2]: s1y, name_mapping[1][3]: s1z, name_mapping[1][4]: s2x, name_mapping[1][5]: s2y, name_mapping[1][6]: s2z}
+        
+        self.transform_func = named_transform
+        
 
 # class PowerLawTransform(UnivariateTransform):
 #     """
