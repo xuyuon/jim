@@ -148,9 +148,9 @@ class Jim(object):
 
         training_chain = train_summary["chains"].reshape(-1, self.prior.n_dim).T
         training_chain = self.add_name(training_chain)
-        if self.sample_transforms:
-            for transform in self.sample_transforms:
-                training_chain = transform.backward(training_chain)
+        if self.transform:
+            for sample_transform in self.sample_transforms:
+                training_chain = sample_transform.backward(training_chain)
         training_log_prob = train_summary["log_prob"]
         training_local_acceptance = train_summary["local_accs"]
         training_global_acceptance = train_summary["global_accs"]
@@ -158,9 +158,9 @@ class Jim(object):
 
         production_chain = production_summary["chains"].reshape(-1, self.prior.n_dim).T
         production_chain = self.add_name(production_chain)
-        if self.sample_transforms:
-            for transform in self.sample_transforms:
-                production_chain = transform.backward(production_chain)
+        if self.transform:
+            for sample_transform in self.sample_transforms:
+                production_chain = sample_transform.backward(production_chain)
         production_log_prob = production_summary["log_prob"]
         production_local_acceptance = production_summary["local_accs"]
         production_global_acceptance = production_summary["global_accs"]
@@ -212,32 +212,15 @@ class Jim(object):
 
         """
         if training:
-            chains = self.sampler.get_sampler_state(training=True)["chains"]
+            chains = self.sampler.get_sampler_state(training=True)["chains"] # (500, 10100, 15)
         else:
             chains = self.sampler.get_sampler_state(training=False)["chains"]
 
-        # Need rewrite to output chains instead of flattened samples
-        chains = chains.reshape(-1, len(self.parameter_names)).T
-        if self.sample_transforms:
-            transformed_chain = {}
-            named_sample = self.add_name(chains[0])
-            for transform in self.sample_transforms:
-                named_sample = transform.backward(named_sample)
-            for key, value in named_sample.items():
-                transformed_chain[key] = [value]
-            for sample in chains[1:]:
-                named_sample = self.add_name(sample)
-                for transform in self.sample_transforms:
-                    named_sample = transform.backward(named_sample)
-                for key, value in named_sample.items():
-                    transformed_chain[key].append(value)
-            output = transformed_chain
-        else:
-            output = self.add_name(chains)
-
-        for key in output.keys():
-            output[key] = jnp.array(output[key])
-        return output
+        chains = chains.transpose(2, 0, 1)
+        chains = self.add_name(chains)
+        for sample_transform in self.sample_transforms:
+            chains = sample_transform.backward(chains)
+        return chains
 
     def plot(self):
         pass
