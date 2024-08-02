@@ -26,6 +26,13 @@ class SingleEventLiklihood(LikelihoodBase):
 
 
 class NullLikelihood(SingleEventLiklihood):
+    """
+    A null likelihood that always returns 0.0.
+    for testing purposes.
+    """
+    def __init__(self) -> None:
+        pass
+    
     def evaluate(self, params: dict[str, Float], data: dict) -> Float:
         return 0.0
 

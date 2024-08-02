@@ -6,7 +6,7 @@ import jax.numpy as jnp
 from jimgw.jim import Jim
 from jimgw.prior import CombinePrior, UniformPrior, CosinePrior, SinePrior, UniformSpherePrior
 from jimgw.single_event.detector import H1, L1
-from jimgw.single_event.likelihood import TransientLikelihoodFD
+from jimgw.single_event.likelihood import TransientLikelihoodFD, NullLikelihood
 from jimgw.single_event.waveform import RippleIMRPhenomPv2
 from jimgw.transforms import BoundToUnbound, MassRatioToSymmetricMassRatioTransform, SpinToCartesianSpinTransform
 from flowMC.strategy.optimization import optimization_Adam
@@ -93,13 +93,15 @@ likelihood_transforms = [
     MassRatioToSymmetricMassRatioTransform(name_mapping=[["q"], ["eta"]]),
 ]
 
-likelihood = TransientLikelihoodFD(
-    ifos,
-    waveform=RippleIMRPhenomPv2(),
-    trigger_time=gps,
-    duration=4,
-    post_trigger_duration=2,
-)
+# likelihood = TransientLikelihoodFD(
+#     ifos,
+#     waveform=RippleIMRPhenomPv2(),
+#     trigger_time=gps,
+#     duration=4,
+#     post_trigger_duration=2,
+# )
+
+likelihood = NullLikelihood()
 
 
 mass_matrix = jnp.eye(15)
