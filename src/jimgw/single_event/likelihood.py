@@ -25,6 +25,11 @@ class SingleEventLiklihood(LikelihoodBase):
         self.waveform = waveform
 
 
+class NullLikelihood(SingleEventLiklihood):
+    def evaluate(self, params: dict[str, Float], data: dict) -> Float:
+        return 0.0
+
+
 class TransientLikelihoodFD(SingleEventLiklihood):
     def __init__(
         self,
