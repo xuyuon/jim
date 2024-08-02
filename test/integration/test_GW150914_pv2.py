@@ -157,7 +157,19 @@ import numpy as np
 samples = np.array(list(result.values())).reshape(int(len(labels)), -1) # flatten the array
 transposed_array = samples.T # transpose the array
 figure = corner.corner(transposed_array, labels=labels, plot_datapoints=False, title_quantiles=[0.16, 0.5, 0.84], show_titles=True, title_fmt='g', use_math_text=True)
-plt.savefig("GW1500914_pv2.jpeg")
+# plt.savefig("GW1500914_pv2.jpeg")
+plt.savefig("GW1500914_pv2_null.png")
 
 import pickle
-pickle.dump(result, open("GW150914_pv2.pkl", "wb"), protocol=pickle.HIGHEST_PROTOCOL)
+# pickle.dump(result, open("GW150914_pv2.pkl", "wb"), protocol=pickle.HIGHEST_PROTOCOL)
+pickle.dump(result, open("GW150914_pv2_null.pkl", "wb"), protocol=pickle.HIGHEST_PROTOCOL)
+
+# sampled_samples = 
+# indices = np.random.choice(sampled_samples.shape[0], size=5000, replace=False)
+# null_samples = sampled_samples[indices]
+
+# prior_samples = prior.sample(jax.random.PRNGKey(42), 5000)
+# prior_samples = np.array(list(prior_samples.values())).reshape(int(len(labels)), -1).T # flatten the array
+# figure = corner.corner(null_samples, labels=labels, plot_datapoints=False, title_quantiles=[0.16, 0.5, 0.84], show_titles=True, title_fmt='g', use_math_text=True, alpha=0.5, color='red')
+# corner.corner(np.array(prior_samples), labels=labels, plot_datapoints=False, title_quantiles=[0.16, 0.5, 0.84], show_titles=True, title_fmt='g', use_math_text=True, fig=figure, color='blue', alpha=0.5)
+# plt.savefig("GW1500914_pv2_null_prior.png")
