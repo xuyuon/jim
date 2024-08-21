@@ -234,7 +234,7 @@ class CombinePrior(Prior):
 
 
 @jaxtyped(typechecker=typechecker)
-class UniformPrior(SequentialTransformPrior):
+class UniformPrior(Prior):
     xmin: float
     xmax: float
 
@@ -247,32 +247,27 @@ class UniformPrior(SequentialTransformPrior):
         xmax: float,
         parameter_names: list[str],
     ):
-        self.parameter_names = parameter_names
-        assert self.n_dim == 1, "UniformPrior needs to be 1D distributions"
+        super().__init__(parameter_names)
+        self.composite = False
+        assert self.n_dim == 1, "LogisticDistribution needs to be 1D distributions"
         self.xmax = xmax
         self.xmin = xmin
-        super().__init__(
-            LogisticDistribution([f"{self.parameter_names[0]}_base"]),
-            [
-                LogitTransform(
-                    (
-                        [f"{self.parameter_names[0]}_base"],
-                        [f"({self.parameter_names[0]}-({xmin}))/{(xmax-xmin)}"],
-                    )
-                ),
-                ScaleTransform(
-                    (
-                        [f"({self.parameter_names[0]}-({xmin}))/{(xmax-xmin)}"],
-                        [f"{self.parameter_names[0]}-({xmin})"],
-                    ),
-                    xmax - xmin,
-                ),
-                OffsetTransform(
-                    ([f"{self.parameter_names[0]}-({xmin})"], self.parameter_names),
-                    xmin,
-                ),
-            ],
+    
+    def sample(
+        self, rng_key: PRNGKeyArray, n_samples: int
+    ) -> dict[str, Float[Array, " n_samples"]]:
+        samples = jax.random.uniform(rng_key, (n_samples,), minval=self.xmin, maxval=self.xmax)
+        return self.add_name(samples[None])
+    
+    def log_prob(self, z: dict[str, Float]) -> Float:
+        variable = z[self.parameter_names[0]]
+        output = jnp.where(
+            (variable >= self.xmax) | (variable <= self.xmin),
+            jnp.zeros_like(variable) - jnp.inf,
+            jnp.zeros_like(variable),
         )
+        return output + jnp.log(1.0 / (self.xmax - self.xmin))
+
 
 
 @jaxtyped(typechecker=typechecker)
