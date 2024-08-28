@@ -509,6 +509,7 @@ class MultipleEventRunManager:
         event_list = list(set.union(*event_list))
         config_data = {}
         for event_name in event_list:
+            config_data.update({event_name: {}})
             config_data[event_name]["detectors"] = self.fetch_detectors(event_name)
             config_data[event_name]["data_parameters"] = {
                 "trigger_time": self.fetch_event_gps(event_name),
