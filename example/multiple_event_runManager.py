@@ -32,7 +32,7 @@ priors={
     "dec": {"name": "CosinePrior"},
 }
 likelihood_parameters={"name": "HeterodynedTransientLikelihoodFD"}
-waveform_parameters={"name": "RippleIMRPhenomD", "f_ref": 20.0},
+waveform_parameters={"name": "RippleIMRPhenomD", "f_ref": 20.0}
 sample_transforms=[
     {"name": "ComponentMassesToChirpMassMassRatioTransform", "name_mapping": [["m_1", "m_2"], ["M_c", "q"]]},
     {"name": "BoundToUnbound", "name_mapping": [["M_c"], ["M_c_unbounded"]], "original_lower_bound": 10.0, "original_upper_bound": 80.0,},
