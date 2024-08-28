@@ -537,7 +537,7 @@ class MultipleEventRunManager:
         run_manager.sample()
         return run_manager.get_samples()
     
-    def run_multiple_event(self, config_path: str, priors, likelihood_parameters, waveform_parameters, sample_transforms, likelihood_transforms, jim_parameters):
+    def run_multiple_events(self, config_path: str, priors, likelihood_parameters, waveform_parameters, sample_transforms, likelihood_transforms, jim_parameters):
         import os
         config = self.load_event_config(config_path)
         if not os.path.exists("corner_plots"):
