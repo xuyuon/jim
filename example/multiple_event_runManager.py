@@ -67,4 +67,4 @@ jim_parameters={
     "local_sampler_arg": local_sampler_arg,
 }
 
-run_manager.run_multiple_events("output", priors, waveform_parameters, likelihood_parameters, sample_transforms, likelihood_transforms, jim_parameters)
+run_manager.run_multiple_events("event_config.yaml", priors, waveform_parameters, likelihood_parameters, sample_transforms, likelihood_transforms, jim_parameters)
