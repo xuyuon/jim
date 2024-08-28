@@ -465,3 +465,102 @@ class SingleEventPERunManager(RunManager):
             print("SNR of detector " + detector + " is " + str(SNR))
         networkSNR = jnp.sum(jnp.array(self.SNRs) ** 2) ** (0.5)
         print("network SNR is", networkSNR)
+
+
+class MultipleEventRunManager:
+    def __init__(self) -> None:
+        pass
+    
+    def fetch_event_gps(self, event_name: str):
+        from gwosc.datasets import event_gps
+        return event_gps(event_name)
+    
+    def fetch_detectors(self, event_name: str):
+        """
+        Args:
+            event_name (str): name of the event
+
+        Returns:
+            a list of detectors availbale for that event
+            e.g. ["H1", "L1", "V1"]
+        """
+        from gwosc.datasets import find_datasets
+        detectors = []
+        if event_name in find_datasets(type='events', detector='H1'):
+            detectors.append('H1')
+        if event_name in find_datasets(type='events', detector='L1'):
+            detectors.append('L1')
+        if event_name in find_datasets(type='events', detector='V1'):
+            detectors.append('V1')
+        return detectors
+    
+    def fetch_event_duration(self, event_name: str):
+        # TODO: fetch duration of the event
+        return 4
+    
+    def generate_default_event_config(self, catalogs: list[str], path: str = "event_config"):
+        """
+        Args:
+            path (str): path where the config file will be saved
+            catalog (list[str]): _description_
+        """
+        from gwosc.datasets import find_datasets
+        event_list = [set(find_datasets(type='events', catalog=catalog)) for catalog in catalogs]
+        event_list = list(set.union(*event_list))
+        config_data = {}
+        for event_name in event_list:
+            config_data[event_name]["detectors"] = self.fetch_detectors(event_name)
+            config_data[event_name]["data_parameters"] = {
+                "trigger_time": self.fetch_event_gps(event_name),
+                "duration": self.fetch_event_duration(event_name),
+                "post_trigger_duration": self.fetch_event_duration(event_name) // 2,
+                "f_min": 20.0,
+                "f_max": 1024.0,
+                "tukey_alpha": 0.2,
+                "f_sampling": 4096.0,
+            }
+        with open(path + ".yaml", "w") as f:
+            yaml.dump(config_data, f, sort_keys=False)
+    
+    def load_event_config(self, path: str):
+        with open(path, "r") as f:
+            data = yaml.safe_load(f)
+        return data
+    
+    def run_single_event(self, run: SingleEventRun):
+        run_manager = SingleEventPERunManager(run=run)
+        run_manager.sample()
+        return run_manager.get_samples()
+    
+    def run_multiple_event(self, config_path: str, priors, likelihood_parameters, waveform_parameters, sample_transforms, likelihood_transforms, jim_parameters):
+        import os
+        config = self.load_event_config(config_path)
+        if not os.path.exists("corner_plots"):
+            os.makedirs("corner_plots")
+        if not os.path.exists("diagnostic_plots"):
+            os.makedirs("diagnostic_plots")
+        if not os.path.exists("summaries"):
+            os.makedirs("summaries")
+            
+        for event_name, event_config in config.items():
+            #TODO: add try except block
+            run = SingleEventRun(
+                seed=0,
+                detectors=event_config["detectors"],
+                data_parameters=event_config["data_parameters"],
+                priors=priors,
+                waveform_parameters=waveform_parameters,
+                likelihood_parameters=likelihood_parameters,
+                sample_transforms=sample_transforms,
+                likelihood_transforms=likelihood_transforms,
+                injection=False,
+                injection_parameters={},  # not used
+                jim_parameters=jim_parameters,
+            )
+            run_manager = SingleEventPERunManager(run=run)
+            run_manager.sample()
+
+            # plot the corner plot and diagnostic plot
+            run_manager.plot_corner("corner_plots/" + event_name + "_corner.jpeg")
+            run_manager.plot_diagnostic("diagnostic_plots/" + event_name + "_diagnostic.jpeg")
+            run_manager.save_summary("summaries/" + event_name + "_summary.txt")
