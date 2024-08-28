@@ -124,7 +124,7 @@ class SingleEventPERunManager(RunManager):
 
     ### Initialization functions ###
 
-    def initialize_likelihood(self, prior: prior.CombinePrior, sample_transforms: transforms.Transform, likelihood_transform: transforms.Transform) -> SingleEventLiklihood:
+    def initialize_likelihood(self, prior: prior.CombinePrior, sample_transforms: transforms.Transform, likelihood_transforms: transforms.Transform) -> SingleEventLiklihood:
         """
         Since prior contains information about types, naming and ranges of parameters,
         some of the likelihood class require the prior to be initialized, such as the
