@@ -496,7 +496,8 @@ class MultipleEventRunManager:
     
     def fetch_event_duration(self, event_name: str):
         # TODO: fetch duration of the event
-        return 4
+        # fetch from configs.json
+        return 4.0
     
     def generate_default_event_config(self, catalogs: list[str], path: str = "event_config"):
         """
@@ -509,17 +510,20 @@ class MultipleEventRunManager:
         event_list = list(set.union(*event_list))
         config_data = {}
         for event_name in event_list:
-            config_data.update({event_name: {}})
-            config_data[event_name]["detectors"] = self.fetch_detectors(event_name)
-            config_data[event_name]["data_parameters"] = {
-                "trigger_time": self.fetch_event_gps(event_name),
-                "duration": self.fetch_event_duration(event_name),
-                "post_trigger_duration": self.fetch_event_duration(event_name) // 2,
-                "f_min": 20.0,
-                "f_max": 1024.0,
-                "tukey_alpha": 0.2,
-                "f_sampling": 4096.0,
-            }
+            try:
+                config_data.update({event_name: {}})
+                config_data[event_name]["detectors"] = self.fetch_detectors(event_name)
+                config_data[event_name]["data_parameters"] = {
+                    "trigger_time": self.fetch_event_gps(event_name),
+                    "duration": self.fetch_event_duration(event_name),
+                    "post_trigger_duration": self.fetch_event_duration(event_name) // 2,
+                    "f_min": 20.0,
+                    "f_max": 1024.0,
+                    "tukey_alpha": 0.2,
+                    "f_sampling": 4096.0,
+                }
+            except:
+                print(f"Event {event_name} not found.")
         with open(path + ".yaml", "w") as f:
             yaml.dump(config_data, f, sort_keys=False)
     
