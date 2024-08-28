@@ -1,0 +1,1044 @@
+GW170809-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1186302519.8
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW151012-v3:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1128678900.4
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200216_220804-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1265926102.8
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190517_055101-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1242107479.8
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191126_115259-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1258804397.6
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191129_134029-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1259070047.1
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190503_185404-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1240944862.2
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190805_211137-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1249074715.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200208_130117-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1265202095.9
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW151226-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1135136350.6
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190630_185205-v2:
+  detectors:
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1245955943.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190602_175927-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1243533585.0
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190924_021846-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1253326744.8
+    duration: 32.0
+    post_trigger_duration: 16.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190926_050336-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW190725_174728-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1248112066.4
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190803_022701-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1248834439.8
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190512_180714-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1241719652.4
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191216_213338-v1:
+  detectors:
+  - H1
+  - V1
+  data_parameters:
+    trigger_time: 1260567236.4
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190910_112807-v2:
+  detectors:
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1252150105.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190728_064510-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1248331528.5
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200225_060421-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1266645879.3
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190413_134308-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1239198206.7
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190413_052954-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1239168612.5
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170823-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1187529256.5
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190426_190642-v1:
+  detectors:
+  - H1
+  - L1
+GW191215_223052-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1260484270.3
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200220_061928-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1266214786.7
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190707_093326-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1246527224.1
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191113_071753-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1257664691.8
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191222_033537-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1261020955.1
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190727_060333-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1248242631.9
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190929_012149-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1253755327.4
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190916_200658-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW200220_124850-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1266238148.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170729-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1185389807.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190708_232457-v2:
+  detectors:
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1246663515.3
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190412_053044-v4:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW190425_081805-v3:
+  detectors:
+  - L1
+  - V1
+GW190814_211039-v3:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW200316_215756-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1268431094.1
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200129_065458-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1264316116.4
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200202_154313-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1264693411.5
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190408_181802-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1238782700.2
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200208_222617-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW190513_205428-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1241816086.7
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200306_093714-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1267522652.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191204_110529-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1259492747.5
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200311_115853-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1267963151.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190403_051519-v1:
+  detectors:
+  - H1
+  - L1
+GW191219_163120-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1260808298.4
+    duration: 32.0
+    post_trigger_duration: 16.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191105_143521-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1256999739.9
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200115_042309-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1263097407.7
+    duration: 32.0
+    post_trigger_duration: 16.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200224_222234-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1266618172.4
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190828_063405-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1251009263.7
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190701_203306-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1246048404.5
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190706_222641-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1246487219.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW150914-v3:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1126259462.4
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190731_140936-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1248617394.6
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200128_022011-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1264213229.9
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190521_030229-v4:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW170817-v3:
+  detectors:
+  - H1
+  - L1
+  - V1
+GW190514_065416-v2:
+  detectors:
+  - H1
+  - L1
+GW190719_215514-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1247608532.9
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200308_173609-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1267724187.7
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200112_155838-v1:
+  detectors:
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1262879936.0
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190925_232845-v1:
+  detectors:
+  - H1
+  - V1
+  data_parameters:
+    trigger_time: 1253489343.1
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170104-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1167559936.6
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190519_153544-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1242315362.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190421_213856-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1239917954.2
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191109_010717-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1257296855.2
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190828_065509-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1251010527.8
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170818-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1187058327.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190720_000836-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1247616534.7
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200322_091133-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1268903511.3
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190527_092055-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1242984073.7
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191230_180458-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1261764316.4
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190620_030421-v2:
+  detectors:
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1245035079.3
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191103_012549-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1256779567.5
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190917_114630-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1252756008.0
+    duration: 64.0
+    post_trigger_duration: 32.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200210_092254-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1265361792.9
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200219_094415-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1266140673.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191127_050227-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1258866165.5
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200302_015811-v1:
+  detectors:
+  - H1
+  - V1
+  data_parameters:
+    trigger_time: 1267149509.5
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170814-v3:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1186741861.5
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190930_133541-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1253885759.2
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190915_235702-v2:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1252627040.6
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW170608-v3:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1180922494.5
+    duration: 16.0
+    post_trigger_duration: 8.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW200209_085452-v1:
+  detectors:
+  - H1
+  - L1
+  - V1
+  data_parameters:
+    trigger_time: 1265273710.1
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW191204_171526-v1:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1259514944.0
+    duration: 8.0
+    post_trigger_duration: 4.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
+GW190521_074359-v2:
+  detectors:
+  - H1
+  - L1
+  data_parameters:
+    trigger_time: 1242459857.4
+    duration: 4.0
+    post_trigger_duration: 2.0
+    f_min: 20.0
+    f_max: 1024.0
+    tukey_alpha: 0.2
+    f_sampling: 4096.0
