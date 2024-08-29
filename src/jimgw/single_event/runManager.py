@@ -184,7 +184,7 @@ class SingleEventPERunManager(RunManager):
 
     def initialize_prior(self) -> prior.CombinePrior:
         priors = []
-        for name, parameters in self.run.prior.items():
+        for name, parameters in self.run.priors.items():
             assert isinstance(
                 parameters, dict
             ), "Prior parameters must be a dictionary."
