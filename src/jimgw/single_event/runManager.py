@@ -184,7 +184,7 @@ class SingleEventPERunManager(RunManager):
 
     def initialize_prior(self) -> prior.CombinePrior:
         priors = []
-        prior_setting = self.run.priors
+        prior_setting = self.run.priors.copy()
         for name, parameters in prior_setting.items():
             assert isinstance(
                 parameters, dict
