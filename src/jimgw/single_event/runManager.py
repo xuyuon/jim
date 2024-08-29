@@ -468,6 +468,7 @@ class SingleEventPERunManager(RunManager):
                 print("SNR of detector " + detector + " is " + str(SNR))
             networkSNR = jnp.sum(jnp.array(self.SNRs) ** 2) ** (0.5)
             print("network SNR is", networkSNR)
+        sys.stdout.close()
 
 
 class MultipleEventRunManager:
