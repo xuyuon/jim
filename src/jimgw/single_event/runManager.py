@@ -223,8 +223,9 @@ class SingleEventPERunManager(RunManager):
                         transform_class = getattr(transforms, transform["name"])
                     except AttributeError:
                         raise ValueError(f"{transform['name']} not recognized.")
-                transform.pop("name")
+                transform_name = transform.pop("name")
                 sample_transforms.append(transform_class(**transform))
+                transform["name"] = transform_name
         if self.run.likelihood_transforms:
             for transform in self.run.likelihood_transforms:
                 assert isinstance(transform, dict), "Transform must be a dictionary."
@@ -241,8 +242,9 @@ class SingleEventPERunManager(RunManager):
                         transform_class = getattr(transforms, transform["name"])
                     except AttributeError:
                         raise ValueError(f"{transform['name']} not recognized.")
-                transform.pop("name")
+                transform_name = transform.pop("name")
                 likelihood_transforms.append(transform_class(**transform))
+                transform["name"] = transform_name
         return sample_transforms, likelihood_transforms
 
     def initialize_detector(self) -> list[Detector]:
