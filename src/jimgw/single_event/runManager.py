@@ -184,8 +184,7 @@ class SingleEventPERunManager(RunManager):
 
     def initialize_prior(self) -> prior.CombinePrior:
         priors = []
-        prior_setting = self.run.priors.copy()
-        for name, parameters in prior_setting.items():
+        for name, parameters in self.run.prior.items():
             assert isinstance(
                 parameters, dict
             ), "Prior parameters must be a dictionary."
@@ -198,8 +197,9 @@ class SingleEventPERunManager(RunManager):
                     prior_class = getattr(prior, parameters["name"])
                 except AttributeError:
                     raise ValueError(f"{parameters['name']} not recognized.")
-            parameters.pop("name")
+            prior_name = parameters.pop("name")
             priors.append(prior_class(parameter_names=[name], **parameters))
+            parameters["name"] = prior_name
         return prior.CombinePrior(priors)
 
     def initialize_transforms(
