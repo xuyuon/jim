@@ -373,7 +373,7 @@ class GroundBased2G(Detector):
         h_sky: dict[str, Float[Array, " n_sample"]],
         params: dict[str, Float],
         psd_file: str = "",
-    ) -> tuple[Float, Float]:
+    ) -> None:
         """
         Inject a signal into the detector data.
 
@@ -392,7 +392,7 @@ class GroundBased2G(Detector):
 
         Returns
         -------
-        SNR
+        None
         """
         self.frequencies = freqs
         self.psd = self.load_psd(freqs, psd_file)
@@ -414,8 +414,6 @@ class GroundBased2G(Detector):
         print(f"For detector {self.name}:")
         print(f"The injected optimal SNR is {optimal_SNR}")
         print(f"The injected match filter SNR is {match_filter_SNR}")
-
-        return optimal_SNR, match_filter_SNR
 
     @jaxtyped(typechecker=typechecker)
     def load_psd(
