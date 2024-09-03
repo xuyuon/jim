@@ -4,7 +4,7 @@ import jax
 import jax.numpy as jnp
 
 from jimgw.jim import Jim
-from jimgw.prior import CombinePrior, UniformPrior, CosinePrior, SinePrior, PowerLawPrior
+from jimgw.prior import CombinePrior, UniformPrior, CosinePrior, SinePrior, PowerLawPrior, UniformSpherePrior
 from jimgw.single_event.detector import H1, L1
 from jimgw.single_event.likelihood import TransientLikelihoodFD
 from jimgw.single_event.waveform import RippleIMRPhenomPv2
@@ -77,11 +77,11 @@ prior = CombinePrior(
 
 sample_transforms = [
     # all the user reparametrization transform
-    ComponentMassesToChirpMassMassRatioTransform(name_mapping=[["m_1", "m_2"], ["M_c", "q"]]),
-    DistanceToSNRWeightedDistanceTransform(name_mapping=[["d_L"], ["d_hat_unbounded"]], conditional_names=["M_c", "q", "ra", "dec", "psi", "theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a_1", "a_2", "phase_c"], gps_time=gps, ifos=ifos, dL_min=dL_prior.xmin, dL_max=dL_prior.xmax, freq_ref=f_ref),
-    GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(name_mapping = [["phase_c"], ["phase_det"]], conditional_names=["ra", "dec", "psi", "M_c", "q", "theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a_1", "a_2"], gps_time=gps, ifo=ifos[0], freq_ref=f_ref),
-    GeocentricArrivalTimeToDetectorArrivalTimeTransform(name_mapping = [["t_c"], ["t_det_unbounded"]], tc_min=t_c_prior.xmin, tc_max=t_c_prior.xmax, conditional_names=["ra", "dec"], gps_time=gps, ifo=ifos[0]),
-    SkyFrameToDetectorFrameSkyPositionTransform(name_mapping = [["ra", "dec"], ["zenith", "azimuth"]], gps_time=gps, ifos=ifos),
+    ComponentMassesToChirpMassMassRatioTransform,
+    DistanceToSNRWeightedDistanceTransform(gps_time=gps, ifos=ifos, dL_min=dL_prior.xmin, dL_max=dL_prior.xmax, has_iota=False),
+    GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(gps_time=gps, ifo=ifos[0], has_iota=False),
+    GeocentricArrivalTimeToDetectorArrivalTimeTransform(tc_min=t_c_prior.xmin, tc_max=t_c_prior.xmax, gps_time=gps, ifo=ifos[0]),
+    SkyFrameToDetectorFrameSkyPositionTransform(gps_time=gps, ifos=ifos),
     # all the bound to unbound transform
     BoundToUnbound(name_mapping = [["M_c"], ["M_c_unbounded"]], original_lower_bound=M_c_min, original_upper_bound=M_c_max),
     BoundToUnbound(name_mapping = [["q"], ["q_unbounded"]], original_lower_bound=q_min, original_upper_bound=q_max),
@@ -99,9 +99,9 @@ sample_transforms = [
 ]
 
 likelihood_transforms = [
-    ComponentMassesToChirpMassMassRatioTransform(name_mapping=[["m_1", "m_2"], ["M_c", "q"]]),
-    SpinToCartesianSpinTransform(name_mapping=[["theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a_1", "a_2"], ["iota", "s1_x", "s1_y", "s1_z", "s2_x", "s2_y", "s2_z"]], freq_ref=f_ref),
-    MassRatioToSymmetricMassRatioTransform(name_mapping=[["q"], ["eta"]]),
+    ComponentMassesToChirpMassMassRatioTransform,
+    SpinToCartesianSpinTransform(freq_ref=f_ref),
+    MassRatioToSymmetricMassRatioTransform,
 ]
 
 likelihood = TransientLikelihoodFD(
