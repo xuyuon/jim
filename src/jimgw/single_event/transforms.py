@@ -8,6 +8,7 @@ from jimgw.transforms import (
     ConditionalBijectiveTransform,
     BijectiveTransform,
     NtoNTransform,
+    reverse_bijective_transform,
 )
 from jimgw.single_event.utils import (
     m1_m2_to_Mc_q,
@@ -25,111 +26,56 @@ from jimgw.single_event.utils import (
 
 
 @jaxtyped(typechecker=typechecker)
-class ComponentMassesToChirpMassMassRatioTransform(BijectiveTransform):
+class SpinToCartesianSpinTransform(NtoNTransform):
     """
-    Transform chirp mass and mass ratio to component masses
+    Spin to Cartesian spin transformation
+    """
 
-    Parameters
-    ----------
-    name_mapping : tuple[list[str], list[str]]
-            The name mapping between the input and output dictionary.
-    """
+    freq_ref: Float
 
     def __init__(
         self,
-        name_mapping: tuple[list[str], list[str]],
+        freq_ref: Float,
     ):
-        super().__init__(name_mapping)
-        assert (
-            "m_1" in name_mapping[0]
-            and "m_2" in name_mapping[0]
-            and "M_c" in name_mapping[1]
-            and "q" in name_mapping[1]
+        name_mapping = (
+            ["theta_jn", "phi_jl", "theta_1", "theta_2", "phi_12", "a_1", "a_2"],
+            ["iota", "s1_x", "s1_y", "s1_z", "s2_x", "s2_y", "s2_z"],
         )
+        super().__init__(name_mapping)
+
+        self.freq_ref = freq_ref
 
         def named_transform(x):
-            Mc, q = m1_m2_to_Mc_q(x["m_1"], x["m_2"])
-            return {"M_c": Mc, "q": q}
+            iota, s1x, s1y, s1z, s2x, s2y, s2z = spin_to_cartesian_spin(
+                x["theta_jn"],
+                x["phi_jl"],
+                x["theta_1"],
+                x["theta_2"],
+                x["phi_12"],
+                x["a_1"],
+                x["a_2"],
+                x["M_c"],
+                x["q"],
+                self.freq_ref,
+                x["phase_c"],
+            )
+            return {
+                "iota": iota,
+                "s1_x": s1x,
+                "s1_y": s1y,
+                "s1_z": s1z,
+                "s2_x": s2x,
+                "s2_y": s2y,
+                "s2_z": s2z,
+            }
 
         self.transform_func = named_transform
-
-        def named_inverse_transform(x):
-            m1, m2 = Mc_q_to_m1_m2(x["M_c"], x["q"])
-            return {"m_1": m1, "m_2": m2}
-
-        self.inverse_transform_func = named_inverse_transform
-
-
-@jaxtyped(typechecker=typechecker)
-class ComponentMassesToChirpMassSymmetricMassRatioTransform(BijectiveTransform):
-    """
-    Transform mass ratio to symmetric mass ratio
-
-    Parameters
-    ----------
-    name_mapping : tuple[list[str], list[str]]
-            The name mapping between the input and output dictionary.
-
-    """
-
-    def __init__(
-        self,
-        name_mapping: tuple[list[str], list[str]],
-    ):
-        super().__init__(name_mapping)
-        assert (
-            "m_1" in name_mapping[0]
-            and "m_2" in name_mapping[0]
-            and "M_c" in name_mapping[1]
-            and "eta" in name_mapping[1]
-        )
-
-        def named_transform(x):
-            Mc, eta = m1_m2_to_Mc_eta(x["m_1"], x["m_2"])
-            return {"M_c": Mc, "eta": eta}
-
-        self.transform_func = named_transform
-
-        def named_inverse_transform(x):
-            m1, m2 = Mc_eta_to_m1_m2(x["M_c"], x["q"])
-            return {"m_1": m1, "m_2": m2}
-
-        self.inverse_transform_func = named_inverse_transform
-
-
-@jaxtyped(typechecker=typechecker)
-class MassRatioToSymmetricMassRatioTransform(BijectiveTransform):
-    """
-    Transform mass ratio to symmetric mass ratio
-
-    Parameters
-    ----------
-    name_mapping : tuple[list[str], list[str]]
-            The name mapping between the input and output dictionary.
-
-    """
-
-    def __init__(
-        self,
-        name_mapping: tuple[list[str], list[str]],
-    ):
-        super().__init__(name_mapping)
-        assert "q" == name_mapping[0][0] and "eta" == name_mapping[1][0]
-
-        self.transform_func = lambda x: {"eta": q_to_eta(x["q"])}
-        self.inverse_transform_func = lambda x: {"q": eta_to_q(x["eta"])}
 
 
 @jaxtyped(typechecker=typechecker)
 class SkyFrameToDetectorFrameSkyPositionTransform(BijectiveTransform):
     """
     Transform sky frame to detector frame sky position
-
-    Parameters
-    ----------
-    name_mapping : tuple[list[str], list[str]]
-            The name mapping between the input and output dictionary.
-
     """
 
     gmst: Float
@@ -138,10 +84,10 @@ class SkyFrameToDetectorFrameSkyPositionTransform(BijectiveTransform):
 
     def __init__(
         self,
-        name_mapping: tuple[list[str], list[str]],
         gps_time: Float,
         ifos: GroundBased2G,
     ):
+        name_mapping = (["ra", "dec"], ["zenith", "azimuth"])
         super().__init__(name_mapping)
 
         self.gmst = (
@@ -150,13 +96,6 @@ class SkyFrameToDetectorFrameSkyPositionTransform(BijectiveTransform):
         delta_x = ifos[0].vertex - ifos[1].vertex
         self.rotation = euler_rotation(delta_x)
         self.rotation_inv = jnp.linalg.inv(self.rotation)
-
-        assert (
-            "ra" in name_mapping[0]
-            and "dec" in name_mapping[0]
-            and "zenith" in name_mapping[1]
-            and "azimuth" in name_mapping[1]
-        )
 
         def named_transform(x):
             zenith, azimuth = ra_dec_to_zenith_azimuth(
@@ -202,13 +141,13 @@ class GeocentricArrivalTimeToDetectorArrivalTimeTransform(
 
     def __init__(
         self,
-        name_mapping: tuple[list[str], list[str]],
-        conditional_names: list[str],
         gps_time: Float,
         ifo: GroundBased2G,
         tc_min: Float,
         tc_max: Float,
     ):
+        name_mapping = [["t_c"], ["t_det_unbounded"]]
+        conditional_names = ["ra", "dec"]
         super().__init__(name_mapping, conditional_names)
 
         self.gmst = (
@@ -217,9 +156,6 @@ class GeocentricArrivalTimeToDetectorArrivalTimeTransform(
         self.ifo = ifo
         self.tc_min = tc_min
         self.tc_max = tc_max
-
-        assert "t_c" in name_mapping[0] and "t_det_unbounded" in name_mapping[1]
-        assert "ra" in conditional_names and "dec" in conditional_names
 
         @jnp.vectorize
         def time_delay(ra, dec, gmst):
@@ -288,12 +224,12 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
 
     def __init__(
         self,
-        name_mapping: tuple[list[str], list[str]],
-        conditional_names: list[str],
         gps_time: Float,
         ifo: GroundBased2G,
         freq_ref: Float = None,
     ):
+        name_mapping = [["phase_c"], ["phase_det"]]
+        conditional_names = ["ra", "dec", "psi", "iota"]
         super().__init__(name_mapping, conditional_names)
 
         self.gmst = (
@@ -355,7 +291,7 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
             R_det_arg = _calc_R_det_arg(
                 x["ra"], x["dec"], x["psi"], iota, self.gmst
             )
-            phase_c = -R_det_arg + x["phase_det"] * 2.0
+            phase_c = (-R_det_arg + x["phase_det"]) * 2.0
             return {
                 "phase_c": phase_c % (2.0 * jnp.pi),
             }
@@ -383,14 +319,14 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
 
     def __init__(
         self,
-        name_mapping: tuple[list[str], list[str]],
-        conditional_names: list[str],
         gps_time: Float,
         ifos: list[GroundBased2G],
         dL_min: Float,
         dL_max: Float,
         freq_ref: Float = None,
     ):
+        name_mapping = [["d_L"], ["d_hat_unbounded"]]
+        conditional_names = ["M_c", "ra", "dec", "psi", "iota"]
         super().__init__(name_mapping, conditional_names)
 
         self.gmst = (
@@ -487,62 +423,65 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
         self.inverse_transform_func = named_inverse_transform
 
 
-@jaxtyped(typechecker=typechecker)
-class SpinToCartesianSpinTransform(NtoNTransform):
-    """
-    Spin to Cartesian spin transformation
-    """
+def named_m1_m2_to_Mc_q(x):
+    Mc, q = m1_m2_to_Mc_q(x["m_1"], x["m_2"])
+    return {"M_c": Mc, "q": q}
 
-    freq_ref: Float
 
-    def __init__(
-        self,
-        name_mapping: tuple[list[str], list[str]],
-        freq_ref: Float,
-    ):
-        super().__init__(name_mapping)
+def named_Mc_q_to_m1_m2(x):
+    m1, m2 = Mc_q_to_m1_m2(x["M_c"], x["q"])
+    return {"m_1": m1, "m_2": m2}
 
-        self.freq_ref = freq_ref
 
-        assert (
-            "theta_jn" in name_mapping[0]
-            and "phi_jl" in name_mapping[0]
-            and "theta_1" in name_mapping[0]
-            and "theta_2" in name_mapping[0]
-            and "phi_12" in name_mapping[0]
-            and "a_1" in name_mapping[0]
-            and "a_2" in name_mapping[0]
-            and "iota" in name_mapping[1]
-            and "s1_x" in name_mapping[1]
-            and "s1_y" in name_mapping[1]
-            and "s1_z" in name_mapping[1]
-            and "s2_x" in name_mapping[1]
-            and "s2_y" in name_mapping[1]
-            and "s2_z" in name_mapping[1]
-        )
+ComponentMassesToChirpMassMassRatioTransform = BijectiveTransform(
+    (["m_1", "m_2"], ["M_c", "q"])
+)
+ComponentMassesToChirpMassMassRatioTransform.transform_func = named_m1_m2_to_Mc_q
+ComponentMassesToChirpMassMassRatioTransform.inverse_transform_func = (
+    named_Mc_q_to_m1_m2
+)
 
-        def named_transform(x):
-            iota, s1x, s1y, s1z, s2x, s2y, s2z = spin_to_cartesian_spin(
-                x["theta_jn"],
-                x["phi_jl"],
-                x["theta_1"],
-                x["theta_2"],
-                x["phi_12"],
-                x["a_1"],
-                x["a_2"],
-                x["M_c"],
-                x["q"],
-                self.freq_ref,
-                x["phase_c"],
-            )
-            return {
-                "iota": iota,
-                "s1_x": s1x,
-                "s1_y": s1y,
-                "s1_z": s1z,
-                "s2_x": s2x,
-                "s2_y": s2y,
-                "s2_z": s2z,
-            }
 
-        self.transform_func = named_transform
+def named_m1_m2_to_Mc_eta(x):
+    Mc, eta = m1_m2_to_Mc_eta(x["m_1"], x["m_2"])
+    return {"M_c": Mc, "eta": eta}
+
+
+def named_Mc_eta_to_m1_m2(x):
+    m1, m2 = Mc_eta_to_m1_m2(x["M_c"], x["eta"])
+    return {"m_1": m1, "m_2": m2}
+
+
+ComponentMassesToChirpMassSymmetricMassRatioTransform = BijectiveTransform(
+    (["m_1", "m_2"], ["M_c", "eta"])
+)
+ComponentMassesToChirpMassSymmetricMassRatioTransform.transform_func = (
+    named_m1_m2_to_Mc_eta
+)
+ComponentMassesToChirpMassSymmetricMassRatioTransform.inverse_transform_func = (
+    named_Mc_eta_to_m1_m2
+)
+
+
+def named_q_to_eta(x):
+    return {"eta": q_to_eta(x["q"])}
+
+
+def named_eta_to_q(x):
+    return {"q": eta_to_q(x["eta"])}
+
+
+MassRatioToSymmetricMassRatioTransform = BijectiveTransform((["q"], ["eta"]))
+MassRatioToSymmetricMassRatioTransform.transform_func = named_q_to_eta
+MassRatioToSymmetricMassRatioTransform.inverse_transform_func = named_eta_to_q
+
+
+ChirpMassMassRatioToComponentMassesTransform = reverse_bijective_transform(
+    ComponentMassesToChirpMassMassRatioTransform
+)
+ChirpMassSymmetricMassRatioToComponentMassesTransform = reverse_bijective_transform(
+    ComponentMassesToChirpMassSymmetricMassRatioTransform
+)
+SymmetricMassRatioToMassRatioTransform = reverse_bijective_transform(
+    MassRatioToSymmetricMassRatioTransform
+)
