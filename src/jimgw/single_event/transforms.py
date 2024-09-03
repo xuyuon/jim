@@ -209,7 +209,7 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
     center of Earth is phase_c / 2 (in ripple, phase_c is the orbital phase)
 
     In the detector convention, the arrival phase of the signal at the
-    detecotr is phase_det = phase_c / 2 + arg R_det
+    detector is phase_det = phase_c / 2 + arg R_det
 
     Parameters
     ----------
@@ -221,12 +221,14 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
     gmst: Float
     ifo: GroundBased2G
     freq_ref: Float
+    has_iota: bool
 
     def __init__(
         self,
         gps_time: Float,
         ifo: GroundBased2G,
         freq_ref: Float = None,
+        has_iota: bool = True,
     ):
         name_mapping = [["phase_c"], ["phase_det"]]
         conditional_names = ["ra", "dec", "psi", "iota"]
@@ -238,15 +240,7 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
         self.ifo = ifo
         self.freq_ref = freq_ref
 
-        assert "phase_c" in name_mapping[0] and "phase_det" in name_mapping[1]
-        assert (
-            "ra" in conditional_names
-            and "dec" in conditional_names
-            and "psi" in conditional_names
-            and ("iota" in conditional_names or ("theta_jn" in conditional_names and "phi_jl" in conditional_names and "theta_1" in conditional_names and "theta_2" in conditional_names and "phi_12" in conditional_names and "a_1" in conditional_names and "a_2" in conditional_names and "q" in conditional_names and "M_c" in conditional_names and "q" in conditional_names))
-        )
-        
-        if "iota" in conditional_names:
+        if has_iota:
             self.get_iota = lambda x: x["iota"]
         else:
             self.get_iota = lambda x: spin_to_iota(
@@ -261,6 +255,23 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
                 x["q"],
                 self.freq_ref,
                 x["phase_c"],
+            )
+        
+        if has_iota:
+            self.get_iota_without_phase_c = lambda x: x["iota"]
+        else:
+            self.get_iota_without_phase_c = lambda x: spin_to_iota(
+                x["theta_jn"],
+                x["phi_jl"],
+                x["theta_1"],
+                x["theta_2"],
+                x["phi_12"],
+                x["a_1"],
+                x["a_2"],
+                x["M_c"],
+                x["q"],
+                self.freq_ref,
+                0.0,
             )
 
         @jnp.vectorize
@@ -287,7 +298,7 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
         self.transform_func = named_transform
 
         def named_inverse_transform(x):
-            iota = self.get_iota(x)
+            iota = self.get_iota_without_phase_c(x)
             R_det_arg = _calc_R_det_arg(
                 x["ra"], x["dec"], x["psi"], iota, self.gmst
             )
@@ -316,6 +327,7 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
     dL_min: Float
     dL_max: Float
     freq_ref: Float
+    has_iota: bool
 
     def __init__(
         self,
@@ -324,6 +336,7 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
         dL_min: Float,
         dL_max: Float,
         freq_ref: Float = None,
+        has_iota: bool = True,
     ):
         name_mapping = [["d_L"], ["d_hat_unbounded"]]
         conditional_names = ["M_c", "ra", "dec", "psi", "iota"]
@@ -337,16 +350,7 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
         self.dL_max = dL_max
         self.freq_ref = freq_ref
 
-        assert "d_L" in name_mapping[0] and "d_hat_unbounded" in name_mapping[1]
-        assert (
-            "ra" in conditional_names
-            and "dec" in conditional_names
-            and "psi" in conditional_names
-            and ("iota" in conditional_names or ("theta_jn" in conditional_names and "phi_jl" in conditional_names and "theta_1" in conditional_names and "theta_2" in conditional_names and "phi_12" in conditional_names and "a_1" in conditional_names and "a_2" in conditional_names and "q" in conditional_names and "phase_c" in conditional_names))
-            and "M_c" in conditional_names
-        )
-
-        if "iota" in conditional_names:
+        if has_iota:
             self.get_iota = lambda x: x["iota"]
         else:
             self.get_iota = lambda x: spin_to_iota(
