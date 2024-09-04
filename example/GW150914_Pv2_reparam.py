@@ -150,7 +150,7 @@ jim = Jim(
 
 jim.sample(jax.random.PRNGKey(42))
 jim.get_samples()
-jim.print_summary()
+# jim.print_summary()
 
 ###########################################
 ########## Visualize the Data #############
@@ -164,7 +164,7 @@ production_chain = production_summary["chains"].reshape(-1, len(jim.parameter_na
 if jim.sample_transforms:
     transformed_chain = jim.add_name(production_chain)
     for transform in reversed(jim.sample_transforms):
-        transformed_chain = transform.backward(transformed_chain)
+        transformed_chain = jax.vmap(transform.backward)(transformed_chain)
 result = transformed_chain
 labels = list(transformed_chain.keys())
 

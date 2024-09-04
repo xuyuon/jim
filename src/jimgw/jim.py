@@ -224,8 +224,12 @@ class Jim(object):
 
         chains = chains.transpose(2, 0, 1)
         chains = self.add_name(chains)
+        # flatten the shape
+        chains = {key: value.reshape(-1) for key, value in chains.items()}
         for sample_transform in reversed(self.sample_transforms):
-            chains = sample_transform.backward(chains)
+            chains = jax.vmap(sample_transform.backward)(chains)
+        # restore the shape
+        chains = {key: value.reshape(-1, self.sampler.n_chains).T for key, value in chains.items()}
         return chains
 
     def plot(self):
