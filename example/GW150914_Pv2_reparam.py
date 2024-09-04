@@ -78,8 +78,8 @@ prior = CombinePrior(
 sample_transforms = [
     # all the user reparametrization transform
     ComponentMassesToChirpMassMassRatioTransform,
-    DistanceToSNRWeightedDistanceTransform(gps_time=gps, ifos=ifos, dL_min=dL_prior.xmin, dL_max=dL_prior.xmax, has_iota=False),
-    GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(gps_time=gps, ifo=ifos[0], has_iota=False),
+    DistanceToSNRWeightedDistanceTransform(gps_time=gps, ifos=ifos, dL_min=dL_prior.xmin, dL_max=dL_prior.xmax, freq_ref=f_ref, has_iota=False),
+    GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(gps_time=gps, ifo=ifos[0], freq_ref=f_ref, has_iota=False),
     GeocentricArrivalTimeToDetectorArrivalTimeTransform(tc_min=t_c_prior.xmin, tc_max=t_c_prior.xmax, gps_time=gps, ifo=ifos[0]),
     SkyFrameToDetectorFrameSkyPositionTransform(gps_time=gps, ifos=ifos),
     # all the bound to unbound transform
