@@ -263,7 +263,7 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
                 "a_1",
                 "a_2",
                 "M_c",
-                "q",
+                "q"
             ]
         super().__init__(name_mapping, conditional_names, inverse_conditional_names)
 
@@ -391,21 +391,7 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
                 "q",
                 "phase_c"
             ]
-            inverse_conditional_names = [
-                "ra",
-                "dec",
-                "psi",
-                "theta_jn",
-                "phi_jl",
-                "theta_1",
-                "theta_2",
-                "phi_12",
-                "a_1",
-                "a_2",
-                "M_c",
-                "q",
-                "phase_c"
-            ]
+            inverse_conditional_names = conditional_names
         super().__init__(name_mapping, conditional_names, inverse_conditional_names)
 
         self.gmst = (
