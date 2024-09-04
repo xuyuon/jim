@@ -165,14 +165,17 @@ class BijectiveTransform(NtoNTransform):
 class ConditionalBijectiveTransform(BijectiveTransform):
 
     conditional_names: list[str]
+    inverse_conditional_names: list[str]
 
     def __init__(
         self,
         name_mapping: tuple[list[str], list[str]],
         conditional_names: list[str],
+        inverse_conditional_names: list[str],
     ):
         super().__init__(name_mapping)
         self.conditional_names = conditional_names
+        self.inverse_conditional_names = inverse_conditional_names
 
     def transform(self, x: dict[str, Float]) -> tuple[dict[str, Float], Float]:
         x_copy = x.copy()
@@ -204,7 +207,7 @@ class ConditionalBijectiveTransform(BijectiveTransform):
         y_copy = y.copy()
         transform_params = dict((key, y_copy[key]) for key in self.name_mapping[1])
         transform_params.update(
-            dict((key, y_copy[key]) for key in self.conditional_names)
+            dict((key, y_copy[key]) for key in self.inverse_conditional_names)
         )
         output_params = self.inverse_transform_func(transform_params)
         jacobian = jax.jacfwd(self.inverse_transform_func)(transform_params)

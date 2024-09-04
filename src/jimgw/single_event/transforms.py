@@ -148,7 +148,8 @@ class GeocentricArrivalTimeToDetectorArrivalTimeTransform(
     ):
         name_mapping = [["t_c"], ["t_det_unbounded"]]
         conditional_names = ["ra", "dec"]
-        super().__init__(name_mapping, conditional_names)
+        inverse_conditional_names = ["ra", "dec"]
+        super().__init__(name_mapping, conditional_names, inverse_conditional_names)
 
         self.gmst = (
             Time(gps_time, format="gps").sidereal_time("apparent", "greenwich").rad
@@ -231,8 +232,40 @@ class GeocentricArrivalPhaseToDetectorArrivalPhaseTransform(
         has_iota: bool = True,
     ):
         name_mapping = [["phase_c"], ["phase_det"]]
-        conditional_names = ["ra", "dec", "psi", "iota"]
-        super().__init__(name_mapping, conditional_names)
+        if has_iota:
+            conditional_names = ["ra", "dec", "psi", "iota"]
+            inverse_conditional_names = ["ra", "dec", "psi", "iota"]
+        else:
+            conditional_names = [
+                "ra",
+                "dec",
+                "psi",
+                "theta_jn",
+                "phi_jl",
+                "theta_1",
+                "theta_2",
+                "phi_12",
+                "a_1",
+                "a_2",
+                "M_c",
+                "q",
+                "phase_c"
+            ]
+            inverse_conditional_names = [
+                "ra",
+                "dec",
+                "psi",
+                "theta_jn",
+                "phi_jl",
+                "theta_1",
+                "theta_2",
+                "phi_12",
+                "a_1",
+                "a_2",
+                "M_c",
+                "q",
+            ]
+        super().__init__(name_mapping, conditional_names, inverse_conditional_names)
 
         self.gmst = (
             Time(gps_time, format="gps").sidereal_time("apparent", "greenwich").rad
@@ -339,8 +372,41 @@ class DistanceToSNRWeightedDistanceTransform(ConditionalBijectiveTransform):
         has_iota: bool = True,
     ):
         name_mapping = [["d_L"], ["d_hat_unbounded"]]
-        conditional_names = ["M_c", "ra", "dec", "psi", "iota"]
-        super().__init__(name_mapping, conditional_names)
+        if has_iota:
+            conditional_names = ["ra", "dec", "psi", "iota"]
+            inverse_conditional_names = ["ra", "dec", "psi", "iota"]
+        else:
+            conditional_names = [
+                "ra",
+                "dec",
+                "psi",
+                "theta_jn",
+                "phi_jl",
+                "theta_1",
+                "theta_2",
+                "phi_12",
+                "a_1",
+                "a_2",
+                "M_c",
+                "q",
+                "phase_c"
+            ]
+            inverse_conditional_names = [
+                "ra",
+                "dec",
+                "psi",
+                "theta_jn",
+                "phi_jl",
+                "theta_1",
+                "theta_2",
+                "phi_12",
+                "a_1",
+                "a_2",
+                "M_c",
+                "q",
+                "phase_c"
+            ]
+        super().__init__(name_mapping, conditional_names, inverse_conditional_names)
 
         self.gmst = (
             Time(gps_time, format="gps").sidereal_time("apparent", "greenwich").rad
