@@ -424,16 +424,22 @@ class HeterodynedTransientLikelihoodFD(TransientLikelihoodFD):
         """
         log_likelihood = 0
         frequencies = self.frequencies
+        print("Frequencies: ", frequencies)
         params["gmst"] = self.gmst
+        print("gmst: ", params["gmst"])
         # adjust the params due to different marginalzation scheme
         params = self.param_func(params)
+        print("Params: ", params)
         # adjust the params due to fixing parameters
         params = self.fixing_func(params)
+        print("Fixed params: ", params)
         # evaluate the waveform as usual
         waveform_sky = self.waveform(frequencies, params)
+        print("Waveform sky: ", waveform_sky)
         align_time = jnp.exp(
             -1j * 2 * jnp.pi * frequencies * (self.epoch + params["t_c"])
         )
+        print("Align time: ", align_time)
         log_likelihood = self.likelihood_function(
             params,
             waveform_sky,
