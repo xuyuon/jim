@@ -256,127 +256,127 @@ class HeterodynedTransientLikelihoodFD(TransientLikelihoodFD):
         )
         self.freq_grid_low = freq_grid[:-1]
 
-        if ref_params:
-            self.ref_params = ref_params
-            print(f"Reference parameters provided, which are {self.ref_params}")
-        elif prior:
-            print("No reference parameters are provided, finding it...")
-            ref_params = self.maximize_likelihood(
-                prior=prior,
-                sample_transforms=sample_transforms,
-                likelihood_transforms=likelihood_transforms,
-                popsize=popsize,
-                n_steps=n_steps,
-            )
-            self.ref_params = {key: float(value) for key, value in ref_params.items()}
-            print(f"The reference parameters are {self.ref_params}")
-        else:
-            raise ValueError(
-                "Either reference parameters or parameter names must be provided"
-            )
-        # safe guard for the reference parameters
-        # since ripple cannot handle eta=0.25
-        if jnp.isclose(self.ref_params["eta"], 0.25):
-            self.ref_params["eta"] = 0.249995
-            print("The eta of the reference parameter is close to 0.25")
-            print(f"The eta is adjusted to {self.ref_params['eta']}")
+        # if ref_params:
+        #     self.ref_params = ref_params
+        #     print(f"Reference parameters provided, which are {self.ref_params}")
+        # elif prior:
+        #     print("No reference parameters are provided, finding it...")
+        #     ref_params = self.maximize_likelihood(
+        #         prior=prior,
+        #         sample_transforms=sample_transforms,
+        #         likelihood_transforms=likelihood_transforms,
+        #         popsize=popsize,
+        #         n_steps=n_steps,
+        #     )
+        #     self.ref_params = {key: float(value) for key, value in ref_params.items()}
+        #     print(f"The reference parameters are {self.ref_params}")
+        # else:
+        #     raise ValueError(
+        #         "Either reference parameters or parameter names must be provided"
+        #     )
+        # # safe guard for the reference parameters
+        # # since ripple cannot handle eta=0.25
+        # if jnp.isclose(self.ref_params["eta"], 0.25):
+        #     self.ref_params["eta"] = 0.249995
+        #     print("The eta of the reference parameter is close to 0.25")
+        #     print(f"The eta is adjusted to {self.ref_params['eta']}")
 
-        print("Constructing reference waveforms..")
+        # print("Constructing reference waveforms..")
 
-        self.ref_params["gmst"] = self.gmst
-        # adjust the params due to different marginalzation scheme
-        self.ref_params = self.param_func(self.ref_params)
-        # adjust the params due to fixing parameters
-        self.ref_params = self.fixing_func(self.ref_params)
+        # self.ref_params["gmst"] = self.gmst
+        # # adjust the params due to different marginalzation scheme
+        # self.ref_params = self.param_func(self.ref_params)
+        # # adjust the params due to fixing parameters
+        # self.ref_params = self.fixing_func(self.ref_params)
 
-        self.waveform_low_ref = {}
-        self.waveform_center_ref = {}
-        self.A0_array = {}
-        self.A1_array = {}
-        self.B0_array = {}
-        self.B1_array = {}
+        # self.waveform_low_ref = {}
+        # self.waveform_center_ref = {}
+        # self.A0_array = {}
+        # self.A1_array = {}
+        # self.B0_array = {}
+        # self.B1_array = {}
 
-        h_sky = reference_waveform(frequency_original, self.ref_params)
+        # h_sky = reference_waveform(frequency_original, self.ref_params)
 
-        # Get frequency masks to be applied, for both original
-        # and heterodyne frequency grid
-        h_amp = jnp.sum(
-            jnp.array([jnp.abs(h_sky[key]) for key in h_sky.keys()]), axis=0
-        )
-        f_valid = frequency_original[jnp.where(h_amp > 0)[0]]
-        f_max = jnp.max(f_valid)
-        f_min = jnp.min(f_valid)
+        # # Get frequency masks to be applied, for both original
+        # # and heterodyne frequency grid
+        # h_amp = jnp.sum(
+        #     jnp.array([jnp.abs(h_sky[key]) for key in h_sky.keys()]), axis=0
+        # )
+        # f_valid = frequency_original[jnp.where(h_amp > 0)[0]]
+        # f_max = jnp.max(f_valid)
+        # f_min = jnp.min(f_valid)
 
-        mask_heterodyne_grid = jnp.where((freq_grid <= f_max) & (freq_grid >= f_min))[0]
-        mask_heterodyne_low = jnp.where(
-            (self.freq_grid_low <= f_max) & (self.freq_grid_low >= f_min)
-        )[0]
-        mask_heterodyne_center = jnp.where(
-            (self.freq_grid_center <= f_max) & (self.freq_grid_center >= f_min)
-        )[0]
-        freq_grid = freq_grid[mask_heterodyne_grid]
-        self.freq_grid_low = self.freq_grid_low[mask_heterodyne_low]
-        self.freq_grid_center = self.freq_grid_center[mask_heterodyne_center]
+        # mask_heterodyne_grid = jnp.where((freq_grid <= f_max) & (freq_grid >= f_min))[0]
+        # mask_heterodyne_low = jnp.where(
+        #     (self.freq_grid_low <= f_max) & (self.freq_grid_low >= f_min)
+        # )[0]
+        # mask_heterodyne_center = jnp.where(
+        #     (self.freq_grid_center <= f_max) & (self.freq_grid_center >= f_min)
+        # )[0]
+        # freq_grid = freq_grid[mask_heterodyne_grid]
+        # self.freq_grid_low = self.freq_grid_low[mask_heterodyne_low]
+        # self.freq_grid_center = self.freq_grid_center[mask_heterodyne_center]
 
-        # Assure frequency grids have same length
-        if len(self.freq_grid_low) > len(self.freq_grid_center):
-            self.freq_grid_low = self.freq_grid_low[: len(self.freq_grid_center)]
+        # # Assure frequency grids have same length
+        # if len(self.freq_grid_low) > len(self.freq_grid_center):
+        #     self.freq_grid_low = self.freq_grid_low[: len(self.freq_grid_center)]
 
-        h_sky_low = reference_waveform(self.freq_grid_low, self.ref_params)
-        h_sky_center = reference_waveform(self.freq_grid_center, self.ref_params)
+        # h_sky_low = reference_waveform(self.freq_grid_low, self.ref_params)
+        # h_sky_center = reference_waveform(self.freq_grid_center, self.ref_params)
 
-        # Get phase shifts to align time of coalescence
-        align_time = jnp.exp(
-            -1j
-            * 2
-            * jnp.pi
-            * frequency_original
-            * (self.epoch + self.ref_params["t_c"])
-        )
-        align_time_low = jnp.exp(
-            -1j
-            * 2
-            * jnp.pi
-            * self.freq_grid_low
-            * (self.epoch + self.ref_params["t_c"])
-        )
-        align_time_center = jnp.exp(
-            -1j
-            * 2
-            * jnp.pi
-            * self.freq_grid_center
-            * (self.epoch + self.ref_params["t_c"])
-        )
+        # # Get phase shifts to align time of coalescence
+        # align_time = jnp.exp(
+        #     -1j
+        #     * 2
+        #     * jnp.pi
+        #     * frequency_original
+        #     * (self.epoch + self.ref_params["t_c"])
+        # )
+        # align_time_low = jnp.exp(
+        #     -1j
+        #     * 2
+        #     * jnp.pi
+        #     * self.freq_grid_low
+        #     * (self.epoch + self.ref_params["t_c"])
+        # )
+        # align_time_center = jnp.exp(
+        #     -1j
+        #     * 2
+        #     * jnp.pi
+        #     * self.freq_grid_center
+        #     * (self.epoch + self.ref_params["t_c"])
+        # )
 
-        for detector in self.detectors:
-            # Get the reference waveforms
-            waveform_ref = (
-                detector.fd_response(frequency_original, h_sky, self.ref_params)
-                * align_time
-            )
-            self.waveform_low_ref[detector.name] = (
-                detector.fd_response(self.freq_grid_low, h_sky_low, self.ref_params)
-                * align_time_low
-            )
-            self.waveform_center_ref[detector.name] = (
-                detector.fd_response(
-                    self.freq_grid_center, h_sky_center, self.ref_params
-                )
-                * align_time_center
-            )
-            A0, A1, B0, B1 = self.compute_coefficients(
-                detector.data,
-                waveform_ref,
-                detector.psd,
-                frequency_original,
-                freq_grid,
-                self.freq_grid_center,
-            )
+        # for detector in self.detectors:
+        #     # Get the reference waveforms
+        #     waveform_ref = (
+        #         detector.fd_response(frequency_original, h_sky, self.ref_params)
+        #         * align_time
+        #     )
+        #     self.waveform_low_ref[detector.name] = (
+        #         detector.fd_response(self.freq_grid_low, h_sky_low, self.ref_params)
+        #         * align_time_low
+        #     )
+        #     self.waveform_center_ref[detector.name] = (
+        #         detector.fd_response(
+        #             self.freq_grid_center, h_sky_center, self.ref_params
+        #         )
+        #         * align_time_center
+        #     )
+        #     A0, A1, B0, B1 = self.compute_coefficients(
+        #         detector.data,
+        #         waveform_ref,
+        #         detector.psd,
+        #         frequency_original,
+        #         freq_grid,
+        #         self.freq_grid_center,
+        #     )
 
-            self.A0_array[detector.name] = A0[mask_heterodyne_center]
-            self.A1_array[detector.name] = A1[mask_heterodyne_center]
-            self.B0_array[detector.name] = B0[mask_heterodyne_center]
-            self.B1_array[detector.name] = B1[mask_heterodyne_center]
+        #     self.A0_array[detector.name] = A0[mask_heterodyne_center]
+        #     self.A1_array[detector.name] = A1[mask_heterodyne_center]
+        #     self.B0_array[detector.name] = B0[mask_heterodyne_center]
+        #     self.B1_array[detector.name] = B1[mask_heterodyne_center]
 
     def evaluate(self, params: dict[str, Float], data: dict) -> Float:
         frequencies_low = self.freq_grid_low
