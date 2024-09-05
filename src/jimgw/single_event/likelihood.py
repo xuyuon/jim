@@ -628,9 +628,7 @@ def original_likelihood(
         )
         optimal_SNR = 4 * jnp.sum(jnp.conj(h_dec) * h_dec / detector.psd * df).real
         log_likelihood += match_filter_SNR - optimal_SNR / 2
-        print("Match filter SNR: ", match_filter_SNR)
-        print("Optimal SNR: ", optimal_SNR)
-        print("Log likelihood: ", log_likelihood)
+        raise ValueError("for debugging")
 
     return log_likelihood
 
