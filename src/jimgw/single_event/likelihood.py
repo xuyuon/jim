@@ -429,10 +429,8 @@ class HeterodynedTransientLikelihoodFD(TransientLikelihoodFD):
         print("gmst: ", params["gmst"])
         # adjust the params due to different marginalzation scheme
         params = self.param_func(params)
-        print("Params: ", params)
         # adjust the params due to fixing parameters
         params = self.fixing_func(params)
-        print("Fixed params: ", params)
         # evaluate the waveform as usual
         waveform_sky = self.waveform(frequencies, params)
         print("Waveform sky: ", waveform_sky)
@@ -630,6 +628,9 @@ def original_likelihood(
         )
         optimal_SNR = 4 * jnp.sum(jnp.conj(h_dec) * h_dec / detector.psd * df).real
         log_likelihood += match_filter_SNR - optimal_SNR / 2
+        print("Match filter SNR: ", match_filter_SNR)
+        print("Optimal SNR: ", optimal_SNR)
+        print("Log likelihood: ", log_likelihood)
 
     return log_likelihood
 
