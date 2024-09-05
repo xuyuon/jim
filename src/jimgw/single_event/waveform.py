@@ -35,7 +35,7 @@ class RippleIMRPhenomD(Waveform):
                 params["s1_z"],
                 params["s2_z"],
                 params["d_L"],
-                0,
+                jnp.zeros_like(params["d_L"]),
                 params["phase_c"],
                 params["iota"],
             ]
