@@ -102,10 +102,11 @@ class SingleEventPERunManager(RunManager):
         if self.run.injection and not self.run.injection_parameters:
             raise ValueError("Injection mode requires injection parameters.")
 
+        local_detectors = self.initialize_detector()
         local_prior = self.initialize_prior()
-        sample_transforms, likelihood_transforms = self.initialize_transforms()
+        sample_transforms, likelihood_transforms = self.initialize_transforms(local_detectors)
         local_likelihood = self.initialize_likelihood(
-            local_prior, sample_transforms, likelihood_transforms
+            local_detectors, local_prior, sample_transforms, likelihood_transforms
         )
         self.jim = Jim(
             local_likelihood,
@@ -136,6 +137,7 @@ class SingleEventPERunManager(RunManager):
 
     def initialize_likelihood(
         self,
+        detectors: list[Detector],
         prior: prior.CombinePrior,
         sample_transforms: transforms.Transform,
         likelihood_transforms: transforms.Transform,
@@ -146,7 +148,6 @@ class SingleEventPERunManager(RunManager):
         heterodyned likelihood.
 
         """
-        detectors = self.initialize_detector()
         waveform = self.initialize_waveform()
         name = self.run.likelihood_parameters["name"]
         assert isinstance(name, str), "Likelihood name must be a string."
@@ -219,6 +220,7 @@ class SingleEventPERunManager(RunManager):
 
     def initialize_transforms(
         self,
+        detectors: list[Detector],
     ) -> tuple[list[transforms.BijectiveTransform], list[transforms.NtoMTransform]]:
         sample_transforms = []
         likelihood_transforms = []
@@ -226,39 +228,46 @@ class SingleEventPERunManager(RunManager):
             for transform in self.run.sample_transforms:
                 assert isinstance(transform, dict), "Transform must be a dictionary."
                 assert "name" in transform, "Transform name must be provided."
+                transform = transform.copy()
+                name = transform.pop("name")
                 assert isinstance(
-                    transform["name"], str
+                    name, str
                 ), "Transform name must be a string."
                 try:
                     transform_class = getattr(
-                        single_event_transforms, transform["name"]
+                        single_event_transforms, name
                     )
                 except AttributeError:
                     try:
-                        transform_class = getattr(transforms, transform["name"])
+                        transform_class = getattr(transforms, name)
                     except AttributeError:
-                        raise ValueError(f"{transform['name']} not recognized.")
-                transform = transform.copy()
-                transform.pop("name")
+                        raise ValueError(f"{name} not recognized.")
+                    
+                if "ifos" in transform:
+                    transform["ifos"] = [detector for detector in detectors if detector.name in transform["ifos"]]
                 sample_transforms.append(transform_class(**transform))
+                
         if self.run.likelihood_transforms:
             for transform in self.run.likelihood_transforms:
                 assert isinstance(transform, dict), "Transform must be a dictionary."
                 assert "name" in transform, "Transform name must be provided."
+                transform = transform.copy()
+                name = transform.pop("name")
                 assert isinstance(
-                    transform["name"], str
+                    name, str
                 ), "Transform name must be a string."
                 try:
                     transform_class = getattr(
-                        single_event_transforms, transform["name"]
+                        single_event_transforms, name
                     )
                 except AttributeError:
                     try:
-                        transform_class = getattr(transforms, transform["name"])
+                        transform_class = getattr(transforms, name)
                     except AttributeError:
-                        raise ValueError(f"{transform['name']} not recognized.")
-                transform = transform.copy()
-                transform.pop("name")
+                        raise ValueError(f"{name} not recognized.")
+                    
+                if "ifos" in transform:
+                    transform["ifos"] = [detector for detector in detectors if detector.name in transform["ifos"]]
                 likelihood_transforms.append(transform_class(**transform))
         return sample_transforms, likelihood_transforms
 
